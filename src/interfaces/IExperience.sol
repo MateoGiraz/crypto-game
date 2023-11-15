@@ -60,12 +60,11 @@ interface IExperience {
     function price() external view returns (uint256 _price);
     /// @notice Issue a number of tokens in exchange of a number of Rubies tokens
     /// Perform the validations in the indicated order:
-    /// @dev Throw if msg.value is zero. Message: "Invalid ether amount"
     /// @dev Throw if sender don't have enough Rubies to cover the price of the tokens to buy. Message: "Insufficient balance"
     /// @dev Throw if the contract don't have enough allowance to cover the price of the tokens to buy. Message: "Insufficient allowance"
-    /// @dev Increase the sell price of each armor or weapon equiped in the user charater for the 10% of the price.
-    /// @dev Increase the armor points in 10% of the experience buyed for armor and 5% for weapons.
-    /// @dev Increase the weapon points in 10% of the experience buyed for weapons and 5% for weapons.  
+    /// @dev Increase the sell price of the user charater for the 10% of the price.
+    /// @dev Increase the armor points of the user charater in 10% of the experience buyed.
+    /// @dev Increase the weapon points of the user charater in 5% of the experience buyed.  
     /// @dev Emit the `Transfer` event with the corresponding parameters.
     /// @param _amount It is the amount of tokens to buy
     function buy(uint256 _amount) external;

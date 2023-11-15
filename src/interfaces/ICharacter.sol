@@ -25,7 +25,7 @@ interface ICharacter {
         string name;
         uint256 attackPoints;
         uint256 armorPoints;
-        IWeapon[3] weapon;
+        uint256[3] weapon;
         uint256 sellPrice;
         uint256 requiredExperience;
         bool onSale;
