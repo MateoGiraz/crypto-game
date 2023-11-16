@@ -4,6 +4,12 @@ pragma solidity 0.8.16;
 import "../interfaces/IRubie.sol";
 /// @dev This contract must implement the IRubie interface
 contract Rubie is IRubie {
+
+    constructor(string memory _name, string memory _symbol, address
+_ownersContract) {
+        
+    }
+
     function name() external view override returns (string memory _name) {}
 
     function symbol() external view override returns (string memory _symbol) {}
@@ -35,7 +41,7 @@ contract Rubie is IRubie {
 
     function mint(uint256 _amount, address _recipient) external override {}
 
-    function buy(uint256 _amount) external override {}
+    function buy(uint256 _amount) external payable override {}
 
     function setPrice(uint256 _price) external override {}
 }

@@ -5,7 +5,9 @@ import "../interfaces/ICharacter.sol";
 
 /// @dev This contract must implement the ICharacter interface
 contract Character is ICharacter {
-    function name() external view override returns (string memory _name) {}
+    function name() external view override returns (string memory _name) {
+        
+    }
 
     function symbol() external view override returns (string memory _symbol) {}
 
@@ -28,7 +30,8 @@ contract Character is ICharacter {
 
     function allowance(
         uint256 _tokenId
-    ) external view override returns (address) {}
+    ) external view override returns (address) {
+    }
 
     function safeTransfer(address _to, uint256 _tokenId) external override {}
 

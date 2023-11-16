@@ -5,7 +5,9 @@ pragma solidity 0.8.16;
 import "../interfaces/IWeapon.sol";
 
 contract Weapon is IWeapon {
-    function name() external view override returns (string memory _name) {}
+    function name() external view override returns (string memory _name) {
+        
+    }
 
     function symbol() external view override returns (string memory _symbol) {}
 

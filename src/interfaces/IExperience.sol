@@ -27,7 +27,7 @@ interface IExperience {
     /// @dev On success must fire the `Transfer` event.
     /// @param _to It is the recipient account address
     /// @param _value It is the amount of tokens to transfer.
-    function safeTransfer(address _to, uint256 _value) external;
+    function safeTransfer(address _to, uint256 _value) external returns (bool);
     /// @notice Transfers `_value` amount of tokens from address `_from` to address `_to`.
     /// Perform the validations in the indicated order:
     /// @dev Throw if `_from` is the zero address with "Invalid _from address".
@@ -44,7 +44,7 @@ interface IExperience {
     /// @param _from It is the remittent account address
     /// @param _to It is the recipient account address
     /// @param _value It is the amount of tokens to transfer
-    function safeTransferFrom(address _from, address _to, uint256 _value) external;
+    function safeTransferFrom(address _from, address _to, uint256 _value) external returns (bool);
     /// @notice Allows `_spender` to withdraw from sender account multiple times, up to the `_value` amount
     /// Perform the validations in the indicated order:
     /// @dev If this function is called multiple times it overwrites the current allowance with `_value`
