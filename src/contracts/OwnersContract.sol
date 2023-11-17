@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
+import "../interfaces/IOwnersContract.sol";
+
 /// @dev This contract must implement the IOwnersContract interface
 
 import "../interfaces/IOwnersContract.sol";
@@ -90,6 +92,5 @@ contract OwnersContract is IOwnersContract {
     
     /// No tengo ni idea
     function WithdrawEarnings() external override {
-
     }
 }
