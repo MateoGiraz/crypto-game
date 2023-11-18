@@ -109,7 +109,7 @@ interface ICharacter {
     /// @param _weapon The weapons equiped of the new hero. Up to three weapons.
     /// @param _sellPrice The price in ethers of the new hero
     /// @param _requiredExperience The required experience to buy the new hero
-    function mintHero(uint256 _attackPoints, uint256 _armorPoints, IWeapon[3] memory _weapon, uint256 _sellPrice, uint256 _requiredExperience) external;
+    function mintHero(uint256 _attackPoints, uint256 _armorPoints, uint256[3] memory _weapon, uint256 _sellPrice, uint256 _requiredExperience) external;
     /// @notice Return the sell metadata for a tokenId
     /// @dev Revert if the tokenId does not exist with "Invalid tokenId"
     /// @param _tokenId The tokenId of the character which information is requested
