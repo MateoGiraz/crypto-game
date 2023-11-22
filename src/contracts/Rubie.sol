@@ -1,10 +1,21 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
+
+
 import "../interfaces/IRubie.sol";
 
 /// @dev This contract must implement the IRubie interface
 contract Rubie is IRubie{
+    string Name;
+    uint256 public constant MAX_INTEGER = 2**256 - 1;
+    string Symbol;
+    address ownersContract;
+    uint256 private _totalSupply;
+    mapping (address => uint256) balances;
+    mapping (address => mapping (address => uint256)) allowed;
+    uint256  Actualprice;
+
     string Name;
     uint256 public constant MAX_INTEGER = 2**256 - 1;
     string Symbol;
@@ -61,6 +72,10 @@ _ownersContract) {
         require(balances[msg.sender] >= _value, "Insufficient balance");
         balances[msg.sender] -= _value;
         balances[_to] += _value;
+<<<<<<< Updated upstream
+        
+=======
+>>>>>>> Stashed changes
     }
 
     function safeTransferFrom(
