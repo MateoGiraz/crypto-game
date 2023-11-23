@@ -108,7 +108,7 @@ contract Rubie is IRubie {
     function mint(
         uint256 _amount,
         address _recipient
-    ) external override onlyOwners {
+    ) external override onlyOwners() {
         require(_amount > 0, "Invalid _amount");
         require(_recipient != address(0), "Invalid _recipient");
         _totalSupply += _amount;
@@ -127,7 +127,7 @@ contract Rubie is IRubie {
         emit Transfer(address(0), msg.sender, _amount);
     }
 
-    function setPrice(uint256 _price) external override {
+    function setPrice(uint256 _price) external override onlyOwners() {
         require(_price > 0, "Invalid _price");
         Price = _price;
     }
