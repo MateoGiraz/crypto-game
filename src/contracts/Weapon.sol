@@ -3,9 +3,7 @@ pragma solidity 0.8.16;
 
 /// @dev This contract must implement the IWeapon interface
 import "../interfaces/IWeapon.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
+import "../interfaces/IERC721TokenReceiver.sol";
 
 contract Weapon is IWeapon {
 
@@ -59,7 +57,6 @@ contract Weapon is IWeapon {
         return _totalSupply;
     }
 
-    /// @notice Return the amount of NFTs each account owns
     function balanceOf(
         address _owner
     ) external view override returns (uint256) {
@@ -78,67 +75,31 @@ contract Weapon is IWeapon {
         return _allowances[_tokenId];
     }
 
-    /// @notice Transfers the ownership of an NFT from sender address to address '_to'
-    /// @dev Throw if `_tokenId` is not a valid NFT identifier with "Invalid tokenId".
-    /// if so, it calls `onERC721Received` on `_to` and throws if the return value is not 
-    /// `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`, message: "Invalid contract".
-    function safeTransfer(address _to, uint256 _tokenId) external override {
-        require(_tokenId > 0, "Invalid tokenId");
-        require(_to != address(0), "Invalid address");
-        require(_owners[_tokenId] == msg.sender, "Not the owner");
-
-        if (_to.code.length  > 0) {
-            bytes4 onERC721ReceivedSelector = IERC721Receiver(_to).onERC721Received(
-                msg.sender,
-                address(this),
-                _tokenId,
-                ""
-            );
-
-            require(
-                onERC721ReceivedSelector == bytes4(keccak256("onERC721Received(address,address,uint256,bytes)")),
-                "Invalid contract"
-            );
-        }
-
+    function safeTransfer(address _to, uint256 _tokenId) external override 
+    isValidTokenId(_tokenId) 
+    isValidAddress(_to)
+    isTokenOwner(_tokenId, msg.sender)
+    {
         _transfer(msg.sender, _to, _tokenId);
         emit Transfer(msg.sender, _to, _tokenId);
+        _checkERC721Receiver(_to, _tokenId);
     }
 
-    /// @dev When transfer is complete, this function checks if `_to` is a smart contract (code size > 0), 
-    /// if so, it calls `onERC721Received` on `_to` and throws if the return value is not 
-    /// `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`, message: "Invalid contract".
-   function safeTransferFrom(
-    address _from,
-    address _to,
-    uint256 _tokenId
-    ) external override {
-        require(_tokenId > 0, "Invalid tokenId");
-        require(_to != address(0), "Invalid address");
-        require(_owners[_tokenId] == _from, "Not the owner");
+   function safeTransferFrom(address _from,address _to, uint256 _tokenId) external override 
+    isValidTokenId(_tokenId) 
+    isValidAddress(_to)
+    isTokenOwner(_tokenId, _from)
+    {
         require(msg.sender == _from || msg.sender == _allowances[_tokenId], "Not authorized");
-
-        if (_to.code.length  > 0) {
-            bytes4 onERC721ReceivedSelector = IERC721Receiver(_to).onERC721Received(
-                msg.sender,
-                _from,
-                _tokenId,
-                ""
-            );
-
-            require(
-                onERC721ReceivedSelector == bytes4(keccak256("onERC721Received(address,address,uint256,bytes)")),
-                "Invalid contract"
-            );
-        }
-
+        
         _transfer(_from, _to, _tokenId);
         emit Transfer(_from, _to, _tokenId);
+        _checkERC721Receiver(_to, _tokenId);
     }
 
-    function approve(address _approved, uint256 _tokenId) external override {
-        require(_tokenId > 0, "Invalid tokenId");
+    function approve(address _approved, uint256 _tokenId) external override isValidTokenId(_tokenId) {
         require(_owners[_tokenId] == msg.sender || msg.sender == _allowances[_tokenId], "Not authorized");
+        
         _allowances[_tokenId] = _approved;
         emit Approval(msg.sender, _approved, _tokenId);
     }
@@ -158,15 +119,15 @@ contract Weapon is IWeapon {
         _characterContract = _characterContract;
     }
 
-    function safeMint(string memory _name) external override {
-        require(bytes(_name).length > 0, "Invalid _name");
-        require(_balances[msg.sender] >= _mintPrice, "Insufficient balance");
-        require(_totalSupply >= _mintPrice, "Insufficient allowance");//TODO: fix
-
+    function safeMint(string memory _name) external override 
+    isValidName(_name)
+    hasEnoughBalance(_mintPrice)
+    hasEnoughAllowance()
+    {
         _totalSupply++;
         _owners[_totalSupply] = msg.sender;
         _metadatas[_totalSupply] = Metadata(
-            1,//TODO: fix
+            _totalSupply,
             30,
             5,
             _mintPrice,
@@ -174,20 +135,6 @@ contract Weapon is IWeapon {
             _name,
             false
         );
-
-        if (msg.sender.code.length  > 0) {
-            bytes4 onERC721ReceivedSelector = IERC721Receiver(msg.sender).onERC721Received(
-                msg.sender,
-                address(this),
-                _totalSupply,
-                ""
-            );
-
-            require(
-                onERC721ReceivedSelector == bytes4(keccak256("onERC721Received(address,address,uint256,bytes)")),
-                "Invalid contract"
-            );
-        }
 
         emit Transfer(address(0), msg.sender, _totalSupply);
     }
@@ -197,18 +144,18 @@ contract Weapon is IWeapon {
         uint256 _armorPoints,
         uint256 _sellPrice,
         uint256 _requiredExperience
-    ) external override {
-        require(_attackPoints > 150, "Invalid _attackPoints");
-        require(_armorPoints > 100, "Invalid _armorPoints");
-        require(_sellPrice > 0, "Invalid _sellPrice");
-        require(_requiredExperience > 10, "Invalid _requiredExperience");
-        require(_balances[msg.sender] >= _mintPrice, "Insufficient balance");
-        require(_totalSupply >= _mintPrice, "Insufficient allowance");//TODO: fix
-
+    ) external override
+    validAttackPoints(_attackPoints)
+    validArmorPoints(_armorPoints)
+    validSellPrice(_sellPrice)
+    validRequiredExperience(_requiredExperience) 
+    hasEnoughBalance(_mintPrice) 
+    hasEnoughAllowance() 
+    {
         _totalSupply++;
         _owners[_totalSupply] = msg.sender;
         _metadatas[_totalSupply] = Metadata(
-            1,//TODO: fix
+            _totalSupply,
             _attackPoints,
             _armorPoints,
             _sellPrice,
@@ -217,41 +164,22 @@ contract Weapon is IWeapon {
             true
         );
 
-        if (msg.sender.code.length  > 0) {
-            bytes4 onERC721ReceivedSelector = IERC721Receiver(msg.sender).onERC721Received(
-                msg.sender,
-                address(this),
-                _totalSupply,
-                ""
-            );
-
-            require(
-                onERC721ReceivedSelector == bytes4(keccak256("onERC721Received(address,address,uint256,bytes)")),
-                "Invalid contract"
-            );
-        }
-
         emit Transfer(address(0), msg.sender, _totalSupply);
     }
 
-    function getSellInformation(
-        uint256 _tokenId
-    )
-        external
-        view
-        override
-        returns (bool _onSale, uint256 _price, uint256 _requiredExperience)
+    function getSellInformation(uint256 _tokenId) 
+    external view override 
+    isValidTokenId(_tokenId)
+    returns (bool _onSale, uint256 _price, uint256 _requiredExperience)
     {
-        //TODO: trow if token not exist
         _onSale = _metadatas[_tokenId].onSale;
         _price = _metadatas[_tokenId].sellPrice;
         _requiredExperience = _metadatas[_tokenId].requiredExperience;
     }
 
-    function buy(uint256 _tokenId, string memory _newName) external override {
+    function buy(uint256 _tokenId, string memory _newName) external override isValidTokenId(_tokenId) {
         /// @dev The sender must pay the corresponding sellPrice in Rubies, otherwise Throw with "Not enough Rubies"
         
-        require(_tokenId > 0, "Invalid tokenId");
         require(_metadatas[_tokenId].onSale, "Weapon not on sale");
         require(_metadatas[_tokenId].requiredExperience <= 0, "Insufficient experience");
         require(_balances[msg.sender] >= _metadatas[_tokenId].sellPrice, "Insufficient balance");
@@ -267,8 +195,7 @@ contract Weapon is IWeapon {
 
     }
 
-    function setOnSale(uint256 _tokenId, bool _onSale) external override {
-        require(_tokenId > 0, "Invalid tokenId");
+    function setOnSale(uint256 _tokenId, bool _onSale) external override isValidTokenId(_tokenId) {
         require(_owners[_tokenId] == msg.sender, "Not the owner");
         _metadatas[_tokenId].onSale = _onSale;
     }
@@ -298,6 +225,8 @@ contract Weapon is IWeapon {
     function collectFee() external override {
         require(msg.sender == _ownerContract, "Not owners contract");
         require(address(this).balance > 0, "zero balance");
+
+        
     }
 
     function addWeaponToCharacter(
@@ -336,4 +265,72 @@ contract Weapon is IWeapon {
         _metadatas[_characterId].sellPrice -= _metadatas[_weaponId].sellPrice;
         _metadatas[_characterId].requiredExperience -= _metadatas[_weaponId].requiredExperience;
     }
+
+    /// private functions
+
+    function _isSmartContract(address _addr) private view returns (bool) {
+        return _addr.code.length > 0;
+    }
+
+    function _checkERC721Receiver(address _addr, uint256 _tokenId) private{
+        if(_isSmartContract(_addr)) {
+            bytes4 ERC721_TokenReceiver_Hash = 0x150b7a02;
+            bytes memory data;
+            bytes4 ERC721_Received = IERC721TokenReceiver(_addr).onERC721Received(msg.sender, _addr, _tokenId, data);
+            require(ERC721_Received == ERC721_TokenReceiver_Hash, "Invalid contract");
+        }
+    }
+
+    /// modifiers
+
+    modifier isValidTokenId(uint256 _tokenId) {
+        require(_tokenId > 0 && _tokenId <= _totalSupply, "Invalid tokenId");
+        _;
+    } 
+
+    modifier isValidAddress(address _address) {
+        require(_address != address(0), "Invalid address");
+        _;
+    }
+
+    modifier isTokenOwner(uint256 _tokenId, address _address) {
+        require(_owners[_tokenId] == _address, "Not the owner");        
+        _;
+    }
+
+    modifier hasEnoughBalance(uint256 _amount) {
+        require(_balances[msg.sender] >= _amount, "Insufficient balance");
+        _;
+    }
+
+    modifier isValidName(string memory _name) {
+        require(bytes(_name).length > 0, "Invalid _name");
+        _;
+    }
+
+    modifier hasEnoughAllowance() {
+        require(0 >= _mintPrice, "Insufficient allowance");//TODO: fix
+        _;
+    }
+
+        modifier validAttackPoints(uint256 _attackPoints) {
+        require(_attackPoints > 150, "Invalid _attackPoints");
+        _;
+    }
+
+    modifier validArmorPoints(uint256 _armorPoints) {
+        require(_armorPoints > 100, "Invalid _armorPoints");
+        _;
+    }
+
+    modifier validSellPrice(uint256 _sellPrice) {
+        require(_sellPrice > 0, "Invalid _sellPrice");
+        _;
+    }
+
+    modifier validRequiredExperience(uint256 _requiredExperience) {
+        require(_requiredExperience > 10, "Invalid _requiredExperience");
+        _;
+    }
 }
+
