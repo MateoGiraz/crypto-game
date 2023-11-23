@@ -3,21 +3,17 @@ pragma solidity 0.8.16;
 
 import "../interfaces/IOwnersContract.sol";
 
-/// @dev This contract must implement the IOwnersContract interface
-
-import "../interfaces/IOwnersContract.sol";
-
 contract OwnersContract is IOwnersContract {
 
-    mapping (address => bool) ownersMap;
     uint256 ownersCount;
     uint256 tokenFeePercentage;
     address[] private _ownersRegistred;
-    mapping (string => address) Addresses;
-
+    mapping (string => address) addresses;
+    mapping (address => bool) areOwners;
+    mapping (address => uint256) balances;
 
     constructor(uint256 _tokenSellFeePercentage) {
-        ownersMap[msg.sender] = true;
+        areOwners[msg.sender] = true;
         ownersCount = 1;
         _ownersRegistred.push(msg.sender);
         tokenFeePercentage = _tokenSellFeePercentage;
@@ -26,16 +22,15 @@ contract OwnersContract is IOwnersContract {
     function ownerIndex() external view override returns (uint256 _ownerIndex){
         _ownerIndex = ownersCount;
     }
-    /// Preguntar
+
     function tokenSellFeePercentage() external view override
         returns (uint256 _tokenSellFee)
     {
         _tokenSellFee = tokenFeePercentage;
     }
-
     
     function owners(address _ownerAddress) external view override returns (bool _isOwner) {
-        _isOwner = ownersMap[_ownerAddress];
+        _isOwner = areOwners[_ownerAddress];
     }
 
     function ownersList(uint256 _ownerIndex) external view override returns (address _ownerAddress) {
@@ -49,8 +44,8 @@ contract OwnersContract is IOwnersContract {
 
     function addressOf(
         string memory _contractName
-    ) external view override returns (address _contractAddress) {
-        _contractAddress = Addresses[_contractName];
+    ) external view override onlyOwner(msg.sender) returns (address _contractAddress) {
+        _contractAddress = addresses[_contractName];
     }
 
     function balanceOf(
@@ -59,11 +54,10 @@ contract OwnersContract is IOwnersContract {
         _ownerBalance = _ownerAddress.balance;
     }
 
-    function addOwner(address _newOwner) external override {
-        require(ownersMap[msg.sender], "Only owners can add new owners");
-        require(!ownersMap[_newOwner], "The address is already an owner");
+    function addOwner(address _newOwner) external override onlyOwner(msg.sender) {
+        require(!areOwners[_newOwner], "The address is already an owner");
         require(_newOwner != address(0x0), "The address is not valid");
-        ownersMap[_newOwner] = true;
+        areOwners[_newOwner] = true;
         ownersCount++;
         _ownersRegistred.push(_newOwner);
     }
@@ -71,26 +65,54 @@ contract OwnersContract is IOwnersContract {
     function addContract(
         string memory _contractName,
         address _contract
-    ) external override {
-        require(ownersMap[msg.sender], "Only owners can add new contracts");
-        require(Addresses[_contractName] == address(0x0), "The contract name is already in use");
+    ) external override 
+    onlyOwner(msg.sender)
+    {
+        require(addresses[_contractName] == address(0x0), "The contract name is already in use");
         require(_contract != address(0x0), "The contract address is not valid");
-        Addresses[_contractName] = _contract;
+        
+        addresses[_contractName] = _contract;
     }
 
     function collectFeeFromContract(
         string memory _contractName
-    ) external override  {
-        require(ownersMap[msg.sender], "Only owners can collect fees");
-        require(Addresses[_contractName] != address(0x0), "The contract name is not valid");
-        require(Addresses[_contractName].balance > 0, "zero balance");
-        uint256 fee = Addresses[_contractName].balance / ownersCount;
+    ) external override 
+    onlyOwner(msg.sender) 
+    {
+        require(addresses[_contractName] != address(0x0), "The contract name is not valid");
+        require(addresses[_contractName].balance > 0, "zero balance");
+
+        uint256 fee = addresses[_contractName].balance / ownersCount;
         for (uint256 i = 0; i < ownersCount; i++) {
-            payable(_ownersRegistred[i]).transfer(fee);
+            balances[_ownersRegistred[i]] += fee;
+            emit Withdraw(_ownersRegistred[i], fee);
         }
     }
     
-    /// No tengo ni idea
-    function WithdrawEarnings() external override {
+    function WithdrawEarnings() external override 
+    onlyOwner(msg.sender) 
+    _isEOA(msg.sender) 
+    {
+        payable(msg.sender).transfer(balances[msg.sender]);
+        balances[msg.sender] = 0;
+
+        emit Transfer(msg.sender, balances[msg.sender]);
+    }
+
+    /// events
+
+    event Withdraw(address indexed _to, uint256 _value);
+    event Transfer(address indexed _to, uint256 _value);
+
+    /// modifiers
+
+    modifier _isEOA(address _address) {
+        require(_address.code.length == 0, "Invalid operation for smart contracts");
+        _;
+    }
+
+    modifier onlyOwner(address _address) {
+        require(areOwners[_address], "Not the owner");
+        _;
     }
 }
