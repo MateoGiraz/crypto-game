@@ -5,7 +5,12 @@ on:
     branches:
       - develop
       - main
-
+      
+  pull_request:
+    branches:
+      - develop
+      - main
+      
 jobs:
   test:
     runs-on: ubuntu-latest
