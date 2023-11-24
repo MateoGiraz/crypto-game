@@ -5,9 +5,7 @@ import "../interfaces/ICharacter.sol";
 
 /// @dev This contract must implement the ICharacter interface
 contract Character is ICharacter {
-    function name() external view override returns (string memory _name) {
-        
-    }
+    function name() external view override returns (string memory _name) {}
 
     function symbol() external view override returns (string memory _symbol) {}
 
@@ -30,8 +28,7 @@ contract Character is ICharacter {
 
     function allowance(
         uint256 _tokenId
-    ) external view override returns (address) {
-    }
+    ) external view override returns (address) {}
 
     function safeTransfer(address _to, uint256 _tokenId) external override {}
 
@@ -52,14 +49,6 @@ contract Character is ICharacter {
     ) external view override returns (IWeapon _weapon) {}
 
     function safeMint(string memory _name) external override {}
-
-    function mintHero(
-        uint256 _attackPoints,
-        uint256 _armorPoints,
-        IWeapon[3] memory _weapon,
-        uint256 _sellPrice,
-        uint256 _requiredExperience
-    ) external override {}
 
     function getSellinformation(
         uint256 _tokenId
@@ -86,4 +75,12 @@ contract Character is ICharacter {
     function setMintingPrice(uint256 _mintPrice) external override {}
 
     function collectFee() external override {}
+
+    function mintHero(
+        uint256 _attackPoints,
+        uint256 _armorPoints,
+        uint256[3] memory _weapon,
+        uint256 _sellPrice,
+        uint256 _requiredExperience
+    ) external override {}
 }
