@@ -3,87 +3,116 @@ pragma solidity 0.8.16;
 
 import "../interfaces/IOwnersContract.sol";
 
-/// @dev This contract must implement the IOwnersContract interface
 contract OwnersContract is IOwnersContract {
-    uint256 private _tokenSellFeePercentage;
-    address[] private _owners;
-    mapping(address => uint256) private ownerBalances;
-    mapping(string => address) private contracts;
 
-    constructor(uint256 _initialTokenSellFeePercentage) {
-        _tokenSellFeePercentage = _initialTokenSellFeePercentage;
-        _owners.push(msg.sender);
+    uint256 ownersCount;
+    uint256 tokenFeePercentage;
+    address[] private _ownersRegistred;
+    mapping (string => address) addresses;
+    mapping (address => bool) areOwners;
+    mapping (address => uint256) balances;
+
+    constructor(uint256 _tokenSellFeePercentage) {
+        areOwners[msg.sender] = true;
+        ownersCount = 1;
+        _ownersRegistred.push(msg.sender);
+        tokenFeePercentage = _tokenSellFeePercentage;
     }
 
     function ownerIndex() external view override returns (uint256 _ownerIndex){
-      return _owners.length - 1;
+        _ownerIndex = ownersCount;
     }
 
-    function tokenSellFeePercentage() external view override returns (uint256 _tokenSellFee){
-      return _tokenSellFeePercentage;
+    function tokenSellFeePercentage() external view override
+        returns (uint256 _tokenSellFee)
+    {
+        _tokenSellFee = tokenFeePercentage;
+    }
+    
+    function owners(address _ownerAddress) external view override returns (bool _isOwner) {
+        _isOwner = areOwners[_ownerAddress];
     }
 
-    function owners(
-        address _ownerAddress
-    ) external view override returns (bool _isOwner) {
-      for (uint256 i = 0; i < _owners.length; i++) {
-        if (_owners[i] == _ownerAddress) {
-          return true;
+    function ownersList(uint256 _ownerIndex) external view override returns (address _ownerAddress) {
+        if (_ownerIndex > ownersCount) {
+            _ownerAddress = address(0x0);
         }
-      }
-      return false;
-    }
-
-    function ownersList(
-        uint256 _ownerIndex
-    ) external view override returns (address _ownerAddress) {
-      return _owners[_ownerIndex];
+        else {
+            _ownerAddress = _ownersRegistred[_ownerIndex];
+        }
     }
 
     function addressOf(
         string memory _contractName
-    ) external view override returns (address _contractAddress) {
-      return contracts[_contractName];
+    ) external view override onlyOwner(msg.sender) returns (address _contractAddress) {
+        _contractAddress = addresses[_contractName];
     }
 
     function balanceOf(
         address _ownerAddress
     ) external view override returns (uint256 _ownerBalance) {
-      return ownerBalances[_ownerAddress];
+        _ownerBalance = _ownerAddress.balance;
     }
 
-    function addOwner(address _newOwner) external override {
-      _owners.push(_newOwner);
+    function addOwner(address _newOwner) external override onlyOwner(msg.sender) {
+        require(!areOwners[_newOwner], "The address is already an owner");
+        require(_newOwner != address(0x0), "The address is not valid");
+        areOwners[_newOwner] = true;
+        ownersCount++;
+        _ownersRegistred.push(_newOwner);
     }
 
     function addContract(
         string memory _contractName,
         address _contract
-    ) external override {
-      contracts[_contractName] = _contract;
+    ) external override 
+    onlyOwner(msg.sender)
+    {
+        require(addresses[_contractName] == address(0x0), "The contract name is already in use");
+        require(_contract != address(0x0), "The contract address is not valid");
+        
+        addresses[_contractName] = _contract;
     }
 
-    /// @dev Withdraw to this contract the ethers locked in each contract for the fees charged.
-    /// The amount received is divided equally among all owners currently listed on the contract and added to 
-    /// the balance that each owner can withdraw
-    /// @dev In the event that the Land contract does not have ethers, revert with the message "zero balance"
     function collectFeeFromContract(
         string memory _contractName
-    ) external override {
-      address contractAddress = contracts[_contractName];
-      uint256 amount = 0;//IProtocol(contractAddress).withdrawFees();
-      require(amount > 0, "zero balance");
-      uint256 amountPerOwner = amount / _owners.length;
-      for (uint256 i = 0; i < _owners.length; i++) {
-        ownerBalances[_owners[i]] += amountPerOwner;
-      }
-      
+    ) external override 
+    onlyOwner(msg.sender) 
+    {
+        require(addresses[_contractName] != address(0x0), "The contract name is not valid");
+        require(addresses[_contractName].balance > 0, "zero balance");
+
+        uint256 fee = addresses[_contractName].balance / ownersCount;
+        for (uint256 i = 0; i < ownersCount; i++) {
+            balances[_ownersRegistred[i]] += fee;
+            emit Withdraw(_ownersRegistred[i], fee);
+        }
+    }
+    
+    function WithdrawEarnings() external override 
+    onlyOwner(msg.sender) 
+    _isEOA(msg.sender) 
+    {
+        payable(msg.sender).transfer(balances[msg.sender]);
+        balances[msg.sender] = 0;
+
+        emit Transfer(msg.sender, balances[msg.sender]);
     }
 
-    function WithdrawEarnings() external override {
-      require(msg.sender == tx.origin, "Invalid operation for smart contracts");
-      uint256 amount = ownerBalances[msg.sender];
-      ownerBalances[msg.sender] = 0;
-      payable(msg.sender).transfer(amount);
+    /// events
+
+    event Withdraw(address indexed _to, uint256 _value);
+    event Transfer(address indexed _to, uint256 _value);
+
+    /// modifiers
+
+    modifier _isEOA(address _address) {
+        require(_address.code.length == 0, "Invalid operation for smart contracts");
+        _;
+    }
+
+    modifier onlyOwner(address _address) {
+        require(areOwners[_address], "Not the owner");
+        _;
     }
 }

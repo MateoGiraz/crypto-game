@@ -1,6 +1,7 @@
 {
-    "name": "hardhat-project",
+    "name": "contracts",
     "dependencies": {
+        "@nomicfoundation/hardhat-chai-matchers": "^1.0.5",
         "@nomiclabs/hardhat-ethers": "^2.2.3",
         "@openzeppelin/contracts": "^4.9.3",
         "dotenv": "^16.0.3"
@@ -11,5 +12,10 @@
         "hardhat": "^2.14.0",
         "hardhat-contract-sizer": "^2.8.0",
         "solidity-coverage": "^0.8.2"
+    },
+    "scripts": {
+        "compile": "npx hardhat compile",
+        "test": "npx hardhat test",
+        "deploy": "npm run compile && npx hardhat run src/scripts/deploy.js --network ganache"
     }
-}
+  }
