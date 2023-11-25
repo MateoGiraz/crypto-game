@@ -83,7 +83,7 @@ contract Rubie is IRubie {
     validValue(_value)
     enoughBalance(_from, _value)
     {
-        require(allowed[_from][msg.sender] >= _value, "Insufficent allowance");
+        require(_from == msg.sender || allowed[_from][msg.sender] >= _value, "Insufficent allowance");
         balances[_from] -= _value;
         balances[_to] += _value;
         emit Transfer(_from, _to, _value);
@@ -179,7 +179,7 @@ contract Rubie is IRubie {
     }
 
     function _checkERC721Receiver(address _addr, uint256 _tokenId) private {
-        if (_isSmartContract(_addr)) {
+        if (false/* TODO _isSmartContract(_addr)*/ ) {
             bytes4 ERC721_TokenReceiver_Hash = 0x150b7a02;
             bytes memory data;
             bytes4 ERC721_Received = IERC721TokenReceiver(_addr)

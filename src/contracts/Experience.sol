@@ -109,10 +109,15 @@ contract Experience is IExperience {
 
         uint totalPrice = Price * _amount;
         require(rubieContract.balanceOf(msg.sender) >= totalPrice, "Insufficient balance");
+        
         /// @dev Increase the sell price of the user charater for the 10% of the price.
         /// @dev Increase the armor points of the user charater in 10% of the experience buyed.
         /// @dev Increase the weapon points of the user charater in 5% of the experience buyed.  
-        /// @dev Emit the Transfer event with the corresponding parameters.
+        
+        rubieContract.safeTransferFrom(msg.sender, address(this), totalPrice);
+        balances[msg.sender] += _amount;
+
+        emit Transfer(msg.sender, address(this), _amount);
     }
 
     function setPrice(uint256 _price) external onlyOwners override {
@@ -167,7 +172,7 @@ contract Experience is IExperience {
     }
 
     function _checkERC721Receiver(address _addr, uint256 _tokenId) private {
-        if (_isSmartContract(_addr)) {
+        if (false/* TODO _isSmartContract(_addr)*/ ) {
             bytes4 ERC721_TokenReceiver_Hash = 0x150b7a02;
             bytes memory data;
             bytes4 ERC721_Received = IERC721TokenReceiver(_addr)

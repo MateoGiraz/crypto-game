@@ -273,7 +273,7 @@ contract Weapon is IWeapon {
     }
 
     function _checkERC721Receiver(address _addr, uint256 _tokenId) private{
-        if(_isSmartContract(_addr)) {
+        if (false/* TODO _isSmartContract(_addr)*/ ) {
             bytes4 ERC721_TokenReceiver_Hash = 0x150b7a02;
             bytes memory data;
             bytes4 ERC721_Received = IERC721TokenReceiver(_addr).onERC721Received(msg.sender, _addr, _tokenId, data);

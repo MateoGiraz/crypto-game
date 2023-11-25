@@ -44,7 +44,7 @@ contract OwnersContract is IOwnersContract {
 
     function addressOf(
         string memory _contractName
-    ) external view override onlyOwner(msg.sender) returns (address _contractAddress) {
+    ) external view override returns (address _contractAddress) {
         _contractAddress = addresses[_contractName];
     }
 
