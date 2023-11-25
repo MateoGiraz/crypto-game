@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 
 import "../interfaces/IExperience.sol";
 import "../interfaces/IOwnersContract.sol";
+import "../interfaces/IRubie.sol";
 import "../interfaces/IERC721TokenReceiver.sol";
 
 contract Experience is IExperience {
@@ -67,7 +68,6 @@ contract Experience is IExperience {
         result = true;
     }
 
-    /// @dev Throw if msg.sender is not the current owner or an approved address with permission to spend 
     function safeTransferFrom(
         address _from,
         address _to,
@@ -79,7 +79,7 @@ contract Experience is IExperience {
     validValue(_value)
     enoughBalance(_from, _value)
     returns (bool result){
-        require(allowed[_from][msg.sender] >= _value, "Insufficent allowance");
+        require(_from == msg.sender || allowed[_from][msg.sender] >= _value, "Insufficent allowance");
         balances[_from] -= _value;
         balances[_to] += _value;
         allowed[_from][msg.sender] -= _value;
@@ -103,17 +103,17 @@ contract Experience is IExperience {
         _price = Price;
     }
 
-    /// @notice Issue a number of tokens in exchange of a number of Rubies tokens
-    /// Perform the validations in the indicated order:
-    /// @dev Throw if sender don't have enough Rubies to cover the price of the tokens to buy. Message: "Insufficient balance"
-    /// @dev Throw if the contract don't have enough allowance to cover the price of the tokens to buy. Message: "Insufficient allowance"
-    /// @dev Increase the sell price of the user charater for the 10% of the price.
-    /// @dev Increase the armor points of the user charater in 10% of the experience buyed.
-    /// @dev Increase the weapon points of the user charater in 5% of the experience buyed.  
-    /// @dev Emit the Transfer event with the corresponding parameters.
-    /// @param _amount It is the amount of tokens to buy
-    function buy(uint256 _amount) 
-    external override {}
+    function buy(uint256 _amount) external override {
+        address rubieAddress = IOwnersContract(OwnersContract).addressOf("Rubie");
+        IRubie rubieContract = IRubie(rubieAddress);
+
+        uint totalPrice = Price * _amount;
+        require(rubieContract.balanceOf(msg.sender) >= totalPrice, "Insufficient balance");
+        /// @dev Increase the sell price of the user charater for the 10% of the price.
+        /// @dev Increase the armor points of the user charater in 10% of the experience buyed.
+        /// @dev Increase the weapon points of the user charater in 5% of the experience buyed.  
+        /// @dev Emit the Transfer event with the corresponding parameters.
+    }
 
     function setPrice(uint256 _price) external onlyOwners override {
         require(_price > 0, "Invalid _price");

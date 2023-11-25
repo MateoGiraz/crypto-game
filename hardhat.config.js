@@ -10,13 +10,16 @@ module.exports = {
   solidity: '0.8.16',
   networks: {
     ganache: {
-      url: process.env.PRIVATE_URL,
-      accounts: [process.env.PRIVATE_KEY],
+      url: process.env.PRIVATE_URL ?? 'HTTP://127.0.0.1:7545',
+      accounts: [
+        process.env.PRIVATE_KEY ??
+          '0xf0ff394a2812f2b3c5de4b9d32dedc1d9811b30354fc326a04b66b800ab48497',
+      ],
     },
   },
   paths: {
     sources: './src',
-    tests: './test',
+    tests: './src/test',
     cache: './cache',
     artifacts: './artifacts',
   },
