@@ -20,7 +20,7 @@ contract Character is ICharacter {
     mapping(address => mapping(uint256 => address)) allowed;
     mapping(uint256 => address) owners;
     mapping(uint256 => Metadata) metadatas;
-    uint256[3] weapons;
+    mapping(address => uint256) owned;
 
     constructor(
         string memory _name,
@@ -64,6 +64,80 @@ contract Character is ICharacter {
         return owners[_tokenId];
     }
 
+    function ownedBy(
+        address owner
+    ) external view override returns (uint256) {
+        address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
+        require(msg.sender == weaponAddress, "Not called by weapons contract");
+        return owned[owner];
+    }
+
+    function equip(uint256 _tokenId, uint256 _weaponId) external override {
+        address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
+        require(msg.sender == weaponAddress, "Not called by weapons contract");
+
+        for(uint256 i = 0; i < 3; i++) {
+            if(metadatas[_tokenId].weapon[i] == uint256(0)) {
+                metadatas[_tokenId].weapon[i] = _weaponId;
+            }
+        }
+    }
+
+    function unEquip(uint256 _tokenId, uint256 _weaponId) external override {
+        address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
+        require(msg.sender == weaponAddress, "Not called by weapons contract");
+
+        for(uint256 i = 0; i < 3; i++) {
+            if(metadatas[_tokenId].weapon[i] == _weaponId) {
+                metadatas[_tokenId].weapon[i] = uint256(0);
+            }
+        }
+    }
+
+    function isEquiped(uint256 _tokenId, uint256 _weaponId) external view override returns (bool) {
+        address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
+        require(msg.sender == weaponAddress, "Not called by weapons contract");
+
+        for(uint256 i = 0; i < 3; i++) {
+            if(metadatas[_tokenId].weapon[i] == _weaponId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function slotsAreFull(uint256 _tokenId) external view override returns (bool){
+        address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
+        require(msg.sender == weaponAddress, "Not called by weapons contract");
+
+        for(uint256 i = 0; i < 3; i++) {
+            if(metadatas[_tokenId].weapon[i] == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function increaseStats(uint256 _characterId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice, uint256 requiredExperience) external override {
+        address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
+        require(msg.sender == weaponAddress, "Not called by weapons contract");
+
+        metadatas[_characterId].attackPoints += attackPoints;
+        metadatas[_characterId].armorPoints += armorPoints;
+        metadatas[_characterId].sellPrice += sellPrice;
+        metadatas[_characterId].requiredExperience += requiredExperience;
+    }
+
+    function decreaseStats(uint256 _characterId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice, uint256 requiredExperience) external override {
+        address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
+        require(msg.sender == weaponAddress, "Not called by weapons contract");
+
+        metadatas[_characterId].attackPoints -= attackPoints;
+        metadatas[_characterId].armorPoints -= armorPoints;
+        metadatas[_characterId].sellPrice -= sellPrice;
+        metadatas[_characterId].requiredExperience -= requiredExperience;
+    }
+
     function allowance(
         uint256 _tokenId
     ) external view override returns (address) {
@@ -80,6 +154,7 @@ contract Character is ICharacter {
         balances[_to] += metadatas[_tokenId].sellPrice;
         
         owners[_tokenId] = _to;
+        owned[_to] = _tokenId;
 
         emit Transfer(msg.sender, _to, _tokenId);
         _checkERC721Receiver(_to, _tokenId);
@@ -99,6 +174,7 @@ contract Character is ICharacter {
         balances[msg.sender] -= metadatas[_tokenId].sellPrice;
         balances[_to] += metadatas[_tokenId].sellPrice;
         owners[_tokenId] = _to;
+        owned[_to] = _tokenId;
 
         emit Transfer(_from, _to, _tokenId);
 
@@ -123,7 +199,10 @@ contract Character is ICharacter {
     function weapon(
         uint256 _weaponIndex
     ) external view override returns (uint256 _weaponId) {
-        _weaponId = weapons[_weaponIndex];
+        uint256 _tokenId = owned[msg.sender];
+        Metadata memory metadata = metadatas[_tokenId];
+
+        _weaponId = metadata.weapon[_weaponIndex];
     }
 
     function safeMint(string memory _name) external override {
@@ -145,6 +224,9 @@ contract Character is ICharacter {
         IOwnersContract ownersContract = IOwnersContract(OwnersContract);
         IRubie rubieContract = IRubie(ownersContract.addressOf("Rubie"));
         
+        owners[_totalSupply] = msg.sender;
+        owned[msg.sender] = _totalSupply;
+
         /// @dev With each new minted character, the owner account will recieve 1000 RUBIE tokens
         rubieContract.mint(1000, msg.sender);
         _checkERC721Receiver(msg.sender, _totalSupply);
@@ -174,8 +256,9 @@ contract Character is ICharacter {
             true
         );
 
-        weapons = _weapon;
         owners[_totalSupply] = msg.sender;
+        owned[msg.sender] = _totalSupply;
+
         balances[msg.sender] += _sellPrice;
         _checkERC721Receiver(msg.sender, _totalSupply);
     }

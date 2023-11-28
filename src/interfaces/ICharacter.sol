@@ -43,6 +43,13 @@ interface ICharacter {
     function balanceOf(address _owner) external view returns (uint256);
     /// @notice Returns the owner address for each token index
     function ownerOf(uint256 _tokenId) external view returns (address);
+    function ownedBy(address owner) external view returns (uint256);
+    function equip(uint256 _tokenId, uint256 _weaponId) external;
+    function isEquiped(uint256 _tokenId, uint256 _weaponId) external view returns (bool);
+    function unEquip(uint256 _tokenId, uint256 _weaponId) external;
+    function slotsAreFull(uint256 _tokenId) external view returns (bool);
+    function increaseStats(uint256 _tokenId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice, uint256 requiredExperience) external;
+    function decreaseStats(uint256 _tokenId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice, uint256 requiredExperience) external;
     /// @notice Return the approved address to manage on behalf of an NFT owner the indicated index token
     function allowance(uint256 _tokenId) external view returns (address);
     /// @notice Transfers the ownership of an NFT from sender address to address '_to'
