@@ -2,8 +2,11 @@
 pragma solidity 0.8.16;
 
 /// @dev This contract must implement the IWeapon interface
+import "../interfaces/IOwnersContract.sol";
+import "../interfaces/IRubie.sol";
 import "../interfaces/IWeapon.sol";
 import "../interfaces/IERC721TokenReceiver.sol";
+import "../interfaces/ICharacter.sol";
 
 contract Weapon is IWeapon {
 
@@ -178,14 +181,21 @@ contract Weapon is IWeapon {
     }
 
     function buy(uint256 _tokenId, string memory _newName) external override isValidTokenId(_tokenId) {
-        /// @dev The sender must pay the corresponding sellPrice in Rubies, otherwise Throw with "Not enough Rubies"
-        
+        IOwnersContract ownersContract = IOwnersContract(_ownerContract);
+        IRubie rubieContract = IRubie(ownersContract.addressOf("Rubie"));
+
+        require(rubieContract.balanceOf(msg.sender) > _metadatas[_tokenId].sellPrice, "Not enough Rubies");
+
         require(_metadatas[_tokenId].onSale, "Weapon not on sale");
         require(_metadatas[_tokenId].requiredExperience <= 0, "Insufficient experience");
         require(_balances[msg.sender] >= _metadatas[_tokenId].sellPrice, "Insufficient balance");
         require(_totalSupply >= _metadatas[_tokenId].sellPrice, "Insufficient allowance");//TODO: fix
 
-        /// @dev If the weapon is equipped to a character, it will be unequipped and then transferred to the new owner.
+        ICharacter charactersContract = ICharacter(ownersContract.addressOf("Character"));
+        uint256 characterToken = charactersContract.ownedBy(msg.sender);
+        charactersContract.unEquip(characterToken, _tokenId);
+
+        rubieContract.safeTransferFrom(msg.sender, _owners[_tokenId], _metadatas[_tokenId].sellPrice);
 
         _balances[msg.sender] -= _metadatas[_tokenId].sellPrice;
         _balances[_owners[_tokenId]] += _metadatas[_tokenId].sellPrice;
@@ -200,7 +210,6 @@ contract Weapon is IWeapon {
         _metadatas[_tokenId].onSale = _onSale;
     }
 
-    /// @dev Returns the index of the last token minted
     function currentTokenID()
         external
         view
@@ -219,51 +228,48 @@ contract Weapon is IWeapon {
         _mintPrice = _mintPrice;
     }
 
-    /// @dev Transfer to the OwnerContract the total balance in ethers that the contract has accumulated as fees.
-    /// @dev This method must be able to be called only by ownersContract, otherwise it will Throw with the message "Not owners contract".
-    /// @dev In the event that the contract does not have a balance, Throw with the message "zero balance".
     function collectFee() external override {
         require(msg.sender == _ownerContract, "Not owners contract");
         require(address(this).balance > 0, "zero balance");
-
         
+        payable(_ownerContract).transfer(address(this).balance);
     }
 
     function addWeaponToCharacter(
         uint256 _weaponId,
         uint256 _characterId
     ) external override {
-        require(_weaponId > 0, "Invalid _weaponId");
-        require(_characterId > 0, "Invalid _characterId");
-        //require(_metadatas[_characterId].weapons.length < 3, "Weapon slots are full");
+        ICharacter characterContract = ICharacter(_characterContract);
+        require(_weaponId > 0 && _weaponId <= _totalSupply, "Invalid _weaponId");
+        require(_characterId > 0 && _characterId <= characterContract.totalSupply(), "Invalid _characterId");
+        require(!characterContract.isEquiped(_characterId, _weaponId), "Weapon already equipped");
+        require(!characterContract.slotsAreFull(_characterId), "Weapon slots are full");
+        
+        uint256 attackPoints = _metadatas[_weaponId].attackPoints;
+        uint256 armorPoints = _metadatas[_weaponId].armorPoints;
+        uint256 sellPrice = _metadatas[_weaponId].sellPrice;
+        uint256 requiredExperience = _metadatas[_weaponId].requiredExperience;
 
-        //_metadatas[_characterId].weapons.push(_weaponId);
-        _metadatas[_characterId].attackPoints += _metadatas[_weaponId].attackPoints;
-        _metadatas[_characterId].armorPonits += _metadatas[_weaponId].armorPonits;
-        _metadatas[_characterId].sellPrice += _metadatas[_weaponId].sellPrice;
-        _metadatas[_characterId].requiredExperience += _metadatas[_weaponId].requiredExperience;
+        characterContract.increaseStats(_characterId, attackPoints, armorPoints, sellPrice, requiredExperience);
+        characterContract.equip(_characterId, _weaponId);
     }
 
     function removeWeaponFromCharacter(
         uint256 _weaponId,
         uint256 _characterId
     ) external override {
-        require(_weaponId > 0, "Invalid _weaponId");
-        require(_characterId > 0, "Invalid _characterId");
-        //require(_metadatas[_characterId].weapons.length > 0, "Weapon not equipped");
+        ICharacter characterContract = ICharacter(_characterContract);
+        require(_weaponId > 0 && _weaponId <= _totalSupply, "Invalid _weaponId");
+        require(_characterId > 0 && _characterId <= characterContract.totalSupply(), "Invalid _characterId");
+        require(characterContract.isEquiped(_characterId, _weaponId), "Weapon not equipped");
+        
+        uint256 attackPoints = _metadatas[_weaponId].attackPoints;
+        uint256 armorPoints = _metadatas[_weaponId].armorPoints;
+        uint256 sellPrice = _metadatas[_weaponId].sellPrice;
+        uint256 requiredExperience = _metadatas[_weaponId].requiredExperience;
 
-        //for (uint256 i = 0; i < _metadatas[_characterId].weapons.length; i++) {
-        //    if (_metadatas[_characterId].weapons[i] == _weaponId) {
-        //        _metadatas[_characterId].weapons[i] = _metadatas[_characterId].weapons[_metadatas[_characterId].weapons.length - 1];
-        //        _metadatas[_characterId].weapons.pop();
-        //        break;
-        //    }
-        //}
-
-        _metadatas[_characterId].attackPoints -= _metadatas[_weaponId].attackPoints;
-        _metadatas[_characterId].armorPonits -= _metadatas[_weaponId].armorPonits;
-        _metadatas[_characterId].sellPrice -= _metadatas[_weaponId].sellPrice;
-        _metadatas[_characterId].requiredExperience -= _metadatas[_weaponId].requiredExperience;
+        characterContract.decreaseStats(_characterId, attackPoints, armorPoints, sellPrice, requiredExperience);
+        characterContract.unEquip(_characterId, _weaponId);
     }
 
     /// private functions

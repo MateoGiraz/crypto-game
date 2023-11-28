@@ -22,7 +22,7 @@ interface IWeapon {
    struct Metadata {
         uint256 characterID;
         uint256 attackPoints;
-        uint256 armorPonits;
+        uint256 armorPoints;
         uint256 sellPrice;
         uint256 requiredExperience;
         string name;
