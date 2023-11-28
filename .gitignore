@@ -5,3 +5,5 @@ coverage
 coverage.json
 artifacts
 node_modules
+.Ds_Store
+

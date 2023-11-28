@@ -85,7 +85,7 @@ interface ICharacter {
     /// @dev Returns the metadata of the character in the indicated index
     function metadataOf(uint256 _tokenId) external view returns (Metadata memory _metadata);
     /// @dev Returns the equipped weapon of the character in the indicated index
-    function weapon(uint256 _weaponIndex) external view returns (IWeapon _weapon);
+    function weapon(uint256 _weaponIndex) external view returns (uint256 _weaponId);
     /// @notice Mint a new Character NFT with the indicated name
     /// @dev Revert if the name is empty with "Invalid _name"
     /// @dev Revert if sender not pay the corresponding mintPrice with "Not enough ETH"
