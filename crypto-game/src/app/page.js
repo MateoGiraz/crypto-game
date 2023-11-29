@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import detectEthereumProvider from '@metamask/detect-provider';
+import Header from '@/components/header';
 
 export default function Component() {
   const [hasProvider, setHasProvider] = useState(false);
@@ -39,15 +40,16 @@ export default function Component() {
   };
 
   return (
-    <div>
-      {wallet == null && (
+    <div class="w-full h-full">
+      {wallet == null &&           
+      <div class="w-full h-full grid h-screen place-items-center">
         <div
-          class="rounded-lg border-2 bg-card text-card-foreground shadow-sm mx-auto max-w-sm p-6 space-y-4 text-center mb-20"
+          class="rounded-lg border-2 bg-card text-card-foreground shadow-sm mx-auto max-w-sm p-6 space-y-4 text-center mb-20 border-solid"
           data-v0-t="card"
         >
           <div class="flex flex-col p-6 space-y-2">
             <h3 class="tracking-tight text-2xl font-bold">
-              Connect to MetaMask {hasProvider ? 'YES' : 'NO'}
+              Connect to MetaMask
             </h3>
             <p class="text-sm text-muted-foreground">
               Click the button below to connect your MetaMask wallet.
@@ -76,9 +78,10 @@ export default function Component() {
             Connect to MetaMask
           </button>
         </div>
-      )}
+        </div>
+      }
 
-      {wallet != null && <div>Wallet Account: {wallet}</div>}
+      {wallet != null && <div><Header></Header></div>}
     </div>
   );
 }
