@@ -1,4 +1,4 @@
-export default function Sidebar({option, setOption}) {
+export default function Sidebar({option, setOption, screens}) {
   const handleButtonClick = (index) => {
     setOption(index);
   };
@@ -6,16 +6,16 @@ export default function Sidebar({option, setOption}) {
   return (
     <div className="h-full w-64 pt-4 pl-2 border-r-2">
       <nav className="flex flex-col p-4">
-        <button className="flex items-center gap-2 my-4" href="#" onClick={() => handleButtonClick(0)}>
-          <IconRuby className={`h-6 w-6 ${option === 0 ? 'text-indigo-500' : 'text-gray-500'}`} />
+        <button className="flex items-center gap-2 my-4" href="#" onClick={() => handleButtonClick(screens.Rubie)}>
+          <IconRubie className={`h-6 w-6 ${option === screens.Rubie ? 'text-indigo-500' : 'text-gray-500'}`} />
           <span className="font-semibold">Rubie</span>
         </button>
-        <button className="flex items-center gap-2 mt-6 mb-4" href="#" onClick={() => handleButtonClick(1)}>
-          <IconWeapon className={`h-6 w-6 ${option === 1 ? 'text-indigo-500' : 'text-gray-500'}`} />
+        <button className="flex items-center gap-2 mt-6 mb-4" href="#" onClick={() => handleButtonClick(screens.Weapon)}>
+          <IconWeapon className={`h-6 w-6 ${option === screens.Weapon ? 'text-indigo-500' : 'text-gray-500'}`} />
           <span className="font-semibold">Weapon</span>
         </button>
-        <button className="flex items-center gap-2 mt-6" href="#" onClick={() => handleButtonClick(2)}>
-          <IconCharacter className={`h-6 w-6 ${option === 2 ? 'text-indigo-500' : 'text-gray-500'}`} />
+        <button className="flex items-center gap-2 mt-6" href="#" onClick={() => handleButtonClick(screens.Character)}>
+          <IconCharacter className={`h-6 w-6 ${option === screens.Character ? 'text-indigo-500' : 'text-gray-500'}`} />
           <span className="font-semibold">Character</span>
         </button>
       </nav>
@@ -44,7 +44,7 @@ function IconCharacter(props) {
 }
 
 
-function IconRuby(props) {
+function IconRubie(props) {
   return (
     <svg
       {...props}
