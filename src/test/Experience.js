@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: MIT
-const { expect } = require('chai');
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 const { ethers } = require('hardhat');
+
+// Usar chai-as-promised
+chai.use(chaiAsPromised);
+const { expect } = chai;
+
 
 describe('Experience', function () {
   let experience;
@@ -8,6 +14,7 @@ describe('Experience', function () {
   let rubie;
   let owner;
   let recipient;
+  let invalidAddress = 0;
 
   beforeEach(async function () {
     [owner, recipient] = await ethers.getSigners();
@@ -102,4 +109,19 @@ describe('Experience', function () {
     expect(finalSenderBalance - initialSenderBalance).to.equal(-10);
     expect(finalRecipientBalance - initialRecipientBalance).to.equal(10);
   });
+
+  it('should revert with invalid address for safeTransfer', async () => {
+    await expect(experience.safeTransfer("0x0000000000000000000000000000000000000000", 10)).to.be.revertedWith("Invalid address");
+});
+
+
+it('should revert with invalid address for safeTransferFrom', async () => {
+  await expect(experience.safeTransferFrom("0x0000000000000000000000000000000000000000", recipient.address, 10)).to.be.revertedWith("Invalid _from address");
+});
+
+
+it('should revert with invalid address for approve', async () => {
+  await expect(experience.approve("0x0000000000000000000000000000000000000000", 10)).to.be.revertedWith("Invalid _spender");
+});
+
 });
