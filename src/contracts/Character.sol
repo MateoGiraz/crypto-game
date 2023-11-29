@@ -68,9 +68,14 @@ contract Character is ICharacter {
         address owner
     ) external view override returns (uint256) {
         address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
-        require(msg.sender == weaponAddress, "Not called by weapons contract");
+        address experienceAddress = IOwnersContract(OwnersContract).addressOf("Experience");
+        require(msg.sender == weaponAddress || msg.sender == experienceAddress, "Not called by weapons nor experience contracts");
         return owned[owner];
     }
+
+    
+
+
 
     function equip(uint256 _tokenId, uint256 _weaponId) external override {
         address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
@@ -116,6 +121,15 @@ contract Character is ICharacter {
             }
         }
         return true;
+    }
+
+        function upgradeStats(uint256 _characterId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice) external override {
+        address experienceAddress = IOwnersContract(OwnersContract).addressOf("Experience");
+        require(msg.sender == experienceAddress, "Not called by experience contract");
+
+        metadatas[_characterId].attackPoints += attackPoints;
+        metadatas[_characterId].armorPoints += armorPoints;
+        metadatas[_characterId].sellPrice += sellPrice;
     }
 
     function increaseStats(uint256 _characterId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice, uint256 requiredExperience) external override {

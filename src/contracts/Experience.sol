@@ -4,6 +4,7 @@ pragma solidity 0.8.16;
 import "../interfaces/IExperience.sol";
 import "../interfaces/IOwnersContract.sol";
 import "../interfaces/IRubie.sol";
+import "../interfaces/ICharacter.sol";
 import "../interfaces/IERC721TokenReceiver.sol";
 
 contract Experience is IExperience {
@@ -107,11 +108,23 @@ contract Experience is IExperience {
 
         uint totalPrice = Price * _amount;
         require(rubieContract.balanceOf(msg.sender) >= totalPrice, "Insufficient balance");
-        
+
+        address characterAddress = IOwnersContract(OwnersContract).addressOf("Character");
+        ICharacter characterContract = ICharacter(characterAddress);
+        uint256 _characterId = characterContract.ownedBy(msg.sender);
+
+        uint256 sellPrice = totalPrice /10;
+        uint256 armorPoints = _amount /10;
+        uint256 attackPoints = _amount /20;
+
         /// @dev Increase the sell price of the user charater for the 10% of the price.
+
+
         /// @dev Increase the armor points of the user charater in 10% of the experience buyed.
-        /// @dev Increase the weapon points of the user charater in 5% of the experience buyed.  
-        
+
+        /// @dev Increase the attack points of the user charater in 5% of the experience buyed.
+
+        characterContract.upgradeStats(_characterId, attackPoints, armorPoints, sellPrice);
         rubieContract.safeTransferFrom(msg.sender, address(this), totalPrice);
         balances[msg.sender] += _amount;
 
