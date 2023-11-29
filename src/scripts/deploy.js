@@ -11,10 +11,22 @@ async function deployContracts() {
     'EXP',
     ownersContractAddress,
   ])
-  //await deployContract('Character', [])
   await deployContract('Rubie', ['Rubie', 'RUB', ownersContractAddress])
-  await deployContract('Weapon', [])
+  const charactersContractAddress = await deployContract('Character', [
+    'Character',
+    'CTR',
+    'URI',
+    ownersContractAddress,
+  ])
+  await deployContract('Weapon', [
+    'Weapon',
+    'WPN',
+    'URI',
+    ownersContractAddress, 
+    charactersContractAddress
+  ])
 }
+  
 
 async function deployContract(contractName, constructorArguments) {
   const Contract = await ethers.getContractFactory(contractName)
