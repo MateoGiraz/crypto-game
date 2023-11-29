@@ -1,6 +1,6 @@
 export default function Header() {
   return (
-    <div className="flex items-center justify-between px-6 py-4 bg-indigo-500 text-white">
+    <div className="flex items-center justify-between px-6 py-4 bg-indigo-500 text-white rounded-t-lg h-[80px]">
       <div className="flex items-center space-x-4">
         <IconWallet className="h-6 w-6" />
         <div>

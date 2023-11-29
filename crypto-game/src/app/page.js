@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import detectEthereumProvider from '@metamask/detect-provider';
-import Header from '@/components/header';
+import Home from '@/components/home';
 
 export default function Component() {
   const [hasProvider, setHasProvider] = useState(false);
@@ -81,7 +81,7 @@ export default function Component() {
         </div>
       }
 
-      {wallet != null && <div><Header></Header></div>}
+      {wallet != null && <Home/>}
     </div>
   );
 }
