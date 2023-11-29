@@ -162,4 +162,5 @@ interface IWeapon {
     /// @param _weaponId The tokenId of the weapon to add
     /// @param _characterId The tokenId of the character to add the weapon
     function removeWeaponFromCharacter(uint256 _weaponId, uint256 _characterId) external;
+    function setOwnership(uint256 _characterId, address newOwner) external;
 }

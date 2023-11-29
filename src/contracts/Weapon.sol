@@ -202,7 +202,6 @@ contract Weapon is IWeapon {
         _owners[_tokenId] = msg.sender;
         _metadatas[_tokenId].onSale = false;
         _metadatas[_tokenId].name = _newName;
-
     }
 
     function setOnSale(uint256 _tokenId, bool _onSale) external override isValidTokenId(_tokenId) {
@@ -270,6 +269,12 @@ contract Weapon is IWeapon {
 
         characterContract.decreaseStats(_characterId, attackPoints, armorPoints, sellPrice, requiredExperience);
         characterContract.unEquip(_characterId, _weaponId);
+    }
+
+    function setOwnership(uint256 _characterId, address newOwner) external override {
+        address charactersContract = IOwnersContract(_ownerContract).addressOf("Character");
+        require(msg.sender ==  charactersContract, "Not called by characters contract");
+        _owners[_characterId] = newOwner;
     }
 
     /// private functions

@@ -221,10 +221,13 @@ contract Character is ICharacter {
 
     function safeMint(string memory _name) external override {
         require(bytes(_name).length > 0, "Invalid _name");
-        /// @dev Revert if sender not pay the corresponding mintPrice with "Not enough ETH"
-        //require(balances[msg.sender] > MintPrice, "Not enough ETH");
+        
+        IOwnersContract ownersContract = IOwnersContract(OwnersContract);
+        IRubie rubieContract = IRubie(ownersContract.addressOf("Rubie"));
 
-        balances[msg.sender] -= MintPrice;
+        require(rubieContract.balanceOf(msg.sender) > MintPrice, "Not enough ETH");
+        rubieContract.removeBalance(msg.sender, MintPrice);
+        
         _totalSupply++;
         metadatas[_totalSupply] = Metadata(
             _name,
@@ -235,14 +238,11 @@ contract Character is ICharacter {
             0,
             false
         );
-        IOwnersContract ownersContract = IOwnersContract(OwnersContract);
-        IRubie rubieContract = IRubie(ownersContract.addressOf("Rubie"));
         
         owners[_totalSupply] = msg.sender;
         owned[msg.sender] = _totalSupply;
 
-        /// @dev With each new minted character, the owner account will recieve 1000 RUBIE tokens
-        rubieContract.mint(1000, msg.sender);
+        rubieContract.addBalance(msg.sender, 1000);
         _checkERC721Receiver(msg.sender, _totalSupply);
     }
        
@@ -293,27 +293,28 @@ contract Character is ICharacter {
 
     function buy(uint256 _tokenId, string memory _newName) 
     external override
-    isValidTokenId(_tokenId)
     {
-        //ASK
-        //require(msg.value >= metadatas[_tokenId].sellPrice, "Not enough ETH");
-        
-        require(metadatas[_tokenId].onSale, "Character not on sale");
-        
         IOwnersContract ownersContract = IOwnersContract(OwnersContract);
         IRubie rubieContract = IRubie(ownersContract.addressOf("Rubie"));
+        IWeapon weaponContract = IWeapon(ownersContract.addressOf("Weapon"));
+
+        require(_tokenId > 0 && _tokenId <= _totalSupply, "Invalid tokenId");
+        require(rubieContract.balanceOf(msg.sender) >= metadatas[_tokenId].sellPrice, "Not enough ETH");
+        require(metadatas[_tokenId].onSale, "Character not on sale");
         require(rubieContract.balanceOf(msg.sender) >= metadatas[_tokenId].requiredExperience, "Insufficient experience");
 
-        IWeapon weaponContract = IWeapon(ownersContract.addressOf("Weapon"));
         for (uint256 i = 0; i < 3; i++) {
             if (metadatas[_tokenId].weapon[i] != 0) {
-                weaponContract.safeTransferFrom(address(this), msg.sender, metadatas[_tokenId].weapon[i]);
+                weaponContract.setOwnership(_tokenId, msg.sender);
             }
         }
 
-        balances[msg.sender] -= metadatas[_tokenId].sellPrice;
-        balances[owners[_tokenId]] += metadatas[_tokenId].sellPrice;
+        rubieContract.removeBalance(msg.sender, metadatas[_tokenId].sellPrice);
+        rubieContract.addBalance(owners[_tokenId], metadatas[_tokenId].sellPrice);
         metadatas[_tokenId].name = _newName;
+
+        owners[_tokenId] = msg.sender;
+        owned[msg.sender] = _tokenId;
     }
 
     function setOnSale(uint256 _tokenId, bool _onSale) external override isValidTokenId(_tokenId) {

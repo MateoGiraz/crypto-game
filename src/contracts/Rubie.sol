@@ -103,6 +103,22 @@ contract Rubie is IRubie {
         _price = Price;
     }
 
+    function addBalance(address owner, uint256 _value) external override {
+        address charactersContract = IOwnersContract(ownersContract).addressOf("Character");
+        require(msg.sender ==  charactersContract, "Not called by characters contract");
+
+        balances[owner] += _value;
+        emit Transfer(address(0), msg.sender, _value);
+    }
+
+    function removeBalance(address owner, uint256 _value) external override {
+        address charactersContract = IOwnersContract(ownersContract).addressOf("Character");
+        require(msg.sender ==  charactersContract, "Not called by characters contract");
+
+        balances[owner] -= _value;
+        emit Transfer(msg.sender, address(0), _value);
+    }
+
     function mint(
         uint256 _amount,
         address _recipient

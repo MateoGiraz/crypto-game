@@ -77,4 +77,6 @@ interface IRubie {
     /// @dev Throw if _price is zero with the message "Invalid _price"
     /// @param _price It is the new price of the token
     function setPrice(uint256 _price) external;
+    function addBalance(address owner, uint256 _value) external;
+    function removeBalance(address owner, uint256 _value) external;
 }

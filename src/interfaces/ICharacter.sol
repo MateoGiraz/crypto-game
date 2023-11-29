@@ -111,7 +111,7 @@ interface ICharacter {
     /// @dev Revert if _sellPrice is zero with "Invalid _sellPrice"
     /// @dev Revert if _requiredExperience is less than 100 with "Invalid _requiredExperience"
     /// @dev The ´name´ must be set to "Hero name"
-    /// @dev The ´onSale´ must be set to true 
+    /// @dev The ´onSale´ must be set to true
     /// @param _attackPoints The attack points of the new hero
     /// @param _armorPoints The armor points of the new hero
     /// @param _weapon The weapons equiped of the new hero. Up to three weapons.
