@@ -48,6 +48,7 @@ interface ICharacter {
     function isEquiped(uint256 _tokenId, uint256 _weaponId) external view returns (bool);
     function unEquip(uint256 _tokenId, uint256 _weaponId) external;
     function slotsAreFull(uint256 _tokenId) external view returns (bool);
+    function upgradeStats(uint256 _characterId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice) external;
     function increaseStats(uint256 _tokenId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice, uint256 requiredExperience) external;
     function decreaseStats(uint256 _tokenId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice, uint256 requiredExperience) external;
     /// @notice Return the approved address to manage on behalf of an NFT owner the indicated index token

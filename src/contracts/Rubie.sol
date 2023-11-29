@@ -69,7 +69,6 @@ contract Rubie is IRubie {
         balances[msg.sender] -= _value;
         balances[_to] += _value;
         emit Transfer(msg.sender, _to, _value);
-        _checkERC721Receiver(_to, 0);
     }
 
     function safeTransferFrom(
@@ -87,7 +86,6 @@ contract Rubie is IRubie {
         balances[_from] -= _value;
         balances[_to] += _value;
         emit Transfer(_from, _to, _value);
-        _checkERC721Receiver(_to, 0);
     }
 
     function approve(address _spender, uint256 _value) 

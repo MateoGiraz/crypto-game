@@ -27,7 +27,21 @@ describe('Experience', function () {
     experience = await Experience.deploy('Experience', 'EXP', ownersContract.address);
     await experience.deployed();
 
+    // Deploy Character
+    // Deploy Character
+    const Character = await ethers.getContractFactory('Character')
+    character = await Character.deploy(
+      'Character',
+      'CHR',
+      'tokenURI',
+      ownersContract.address,
+    )
+    await character.deployed()
+
+    
+
     await ownersContract.addContract('Rubie', rubie.address);
+    await ownersContract.addContract('Character', character.address);
     await ownersContract.addContract('Experience', experience.address);
   });
 
