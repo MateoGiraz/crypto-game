@@ -64,7 +64,6 @@ contract Experience is IExperience {
         balances[msg.sender] -= _value;
         balances[_to] += _value;
         emit Transfer(msg.sender, _to, _value);
-        _checkERC721Receiver(_to, 0);
         result = true;
     }
 
@@ -84,7 +83,6 @@ contract Experience is IExperience {
         balances[_to] += _value;
         allowed[_from][msg.sender] -= _value;
         emit Transfer(_from, _to, _value);
-        _checkERC721Receiver(_to, 0);
         result = true;
     }
 
