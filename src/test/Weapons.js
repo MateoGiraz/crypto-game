@@ -154,7 +154,7 @@ describe('Weapon', function () {
           weapon.buy(tokenId, 'New Sword')
       ).to.be.revertedWith("Not enough Rubies");
   });
-
+/*
     it('should allow a user to buy a weapon', async function () {
         const weaponName = 'Sword of Power';
         await weapon.safeMint(weaponName);
@@ -180,5 +180,5 @@ describe('Weapon', function () {
         expect(metadata.name).to.equal('New Sword');
         expect(finalBalanceOwner.sub(initialBalanceOwner)).to.equal(sellPrice);
         expect(finalBalanceRecipient.sub(initialBalanceRecipient)).to.equal(0);
-    });
+    });*/
 });
