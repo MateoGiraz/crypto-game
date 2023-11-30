@@ -4,7 +4,7 @@
 # Obligatorio de Taller de Tecnologías 2 - Gaming Platform
 
 ## Integrantes del equipo: Mateo Giraz (241195) - Joaquin Rodríguez (231355) - Santiago Villar (256345)
-### Grupo M6C- Profesor: Itay Brenner
+### Grupo M6C- Profesor: Itay Brenner, German Trautman
 
 ### [Enlace al repositorio](https://github.com/TallerTecnologias2/obligatorio-2023-02-giraz-rodriguez-villar-1)
 ### [Video presentando el obligatorio realizado](https://www.youtube.com/watch?v=CBhjbTMVV1Q&ab_channel=MateoGiraz)
