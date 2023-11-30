@@ -21,7 +21,7 @@ contract Experience is IExperience {
     mapping (address => uint256) balances;
     mapping (address => mapping (address => uint256)) allowed;
 
-    constructor(string memory _name, string memory _symbol, address _ownersContract) {
+    constructor(string memory _name, string memory _symbol, address _ownersContract) isValidName(_name) {
         require(bytes(_symbol).length == 3, "Invalid Symbol");
         _totalSupply = 0;
         Name = _name;
@@ -174,6 +174,11 @@ contract Experience is IExperience {
             _value == 0 || allowed[msg.sender][_spender] == 0,
             "Invalid allowance amount. Set to zero first"
         );
+        _;
+    }
+
+    modifier isValidName(string memory name) {
+        require(bytes(name).length > 0, "Invalid _name");
         _;
     }
 

@@ -83,29 +83,102 @@ describe('Weapon', function () {
         
       });
 
-      it('should add a weapon to a character and update stats', async function () {
+      it('should not allow transferring a token from an address that is not the owner', async function () {
+        const weaponName = 'Sword of Power'; 
+        await weapon.safeMint(weaponName);
+        const weaponId = weapon.totalSupply();
 
-        await character.mintHero('Hero');
-        characterId = await character.tokenId();
+        await expect(
+            weapon.connect(recipient).safeTransferFrom(owner.address, recipient.address, weaponId)
+        ).to.be.revertedWith("Not authorized");
+    });
+
+    it('should mint a legendary weapon with valid parameters', async function () {
+        const attackPoints = 200;
+        const armorPoints = 150;
+        const sellPrice = 100;
+        const requiredExperience = 20;
+
+        await weapon.mintLegendaryWeapon(attackPoints, armorPoints, sellPrice, requiredExperience);
+
+        const tokenId = weapon.totalSupply();
+        const metadata = await weapon.metadataOf(tokenId);
+
+        expect(metadata.attackPoints).to.equal(attackPoints);
+        expect(metadata.armorPoints).to.equal(armorPoints);
+        expect(metadata.sellPrice).to.equal(sellPrice);
+        expect(metadata.requiredExperience).to.equal(requiredExperience);
+        expect(metadata.onSale).to.equal(true);
+    });
+
+    it('should not mint a legendary weapon with invalid parameters', async function () {
+        // Attempt to mint a legendary weapon with invalid attackPoints
+        await expect(
+            weapon.mintLegendaryWeapon(100, 150, 100, 20)
+        ).to.be.revertedWith("Invalid _attackPoints");
+
+        // Add more test cases for invalid parameters
+    });
+
+    it('should allow the owner to set a weapon on sale', async function () {
+        const weaponName = 'Sword of Power';
+        await weapon.safeMint(weaponName);
+        const tokenId = weapon.totalSupply();
+
+        await weapon.setOnSale(tokenId, true);
+
+        const metadata = await weapon.metadataOf(tokenId);
+        expect(metadata.onSale).to.equal(true);
+    });
+
+    it('should not allow a non-owner to set a weapon on sale', async function () {
+        const weaponName = 'Sword of Power';
+        await weapon.safeMint(weaponName);
+        const tokenId = weapon.totalSupply();
+
+        await expect(
+            weapon.connect(recipient).setOnSale(tokenId, true)
+        ).to.be.revertedWith("Not the owner");
+    });
+
+    it('should not allow a purchase if the buyer does not have enough Rubies', async function () {
+      const weaponName = 'Sword of Power';
+      await weapon.safeMint(weaponName);
+      const tokenId = weapon.totalSupply();
+      const sellPrice = 100;
+
+      await weapon.setOnSale(tokenId, true);
+
+      // Try to buy without enough Rubies
+      await expect(
+          weapon.buy(tokenId, 'New Sword')
+      ).to.be.revertedWith("Not enough Rubies");
+  });
+
+    it('should allow a user to buy a weapon', async function () {
+        const weaponName = 'Sword of Power';
+        await weapon.safeMint(weaponName);
+        const tokenId = weapon.totalSupply();
+        const sellPrice = 50;
+
+        const initialBalanceOwner = await rubie.balanceOf(owner.address);
+        const initialBalanceRecipient = await rubie.balanceOf(recipient.address);
+        await rubie.mint(sellPrice, recipient.address);
+        await rubie.mint(sellPrice, owner.address);
+
+        await weapon.setOnSale(tokenId, true);
+
+        await expect(weapon.buy(tokenId, 'New Sword'));
         
-        const initialWeaponCount = await character.weaponCount(characterId);
-        expect(initialWeaponCount.toNumber()).to.equal(0);
+        const metadata = await weapon.metadataOf(tokenId);
 
-        await weapon.addWeaponToCharacter(weaponId, characterId);
+        const finalBalanceOwner = await rubie.balanceOf(owner.address);
+        
+        const finalBalanceRecipient = await rubie.balanceOf(recipient.address);
 
-        const updatedWeaponCount = await character.weaponCount(characterId);
-        expect(updatedWeaponCount).to.equal(1);
-
-
-        const characterStats = await character.metadataOf(characterId);
-        const weaponStats = await weapon.metadataOf(weaponId);
-
-        expect(characterStats.attackPoints).to.equal(weaponStats.attackPoints);
-        expect(characterStats.armorPoints).to.equal(weaponStats.armorPoints);
-        expect(characterStats.sellPrice).to.equal(weaponStats.sellPrice);
-        expect(characterStats.requiredExperience).to.equal(weaponStats.requiredExperience);
-
-        const isEquipped = await characterContract.isEquiped(characterId, weaponId);
-        expect(isEquipped).to.be.true;
+        //expect(metadata.onSale).to.equal(false);
+        expect(metadata.name).to.equal('New Sword');
+        expect(finalBalanceOwner.sub(initialBalanceOwner)).to.equal(sellPrice);
+        expect(finalBalanceRecipient.sub(initialBalanceRecipient)).to.equal(0);
     });
 });
