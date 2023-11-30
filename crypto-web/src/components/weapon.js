@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { characterAbi } from '../abi/characterAbi';
 import { weaponAbi } from '../abi/weaponAbi';
 import { characterAddress, weaponAddress } from '../addresses';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Weapon() {
   const [mintPrice, setMintPrice] = useState('');
@@ -20,6 +22,9 @@ export default function Weapon() {
     characterAbi,
     signer
   );
+
+  const notify = (message) => toast.success(message);
+  const notifyError = (message) => toast.error(message);
 
   useEffect(() => {
     const fetchMintPrice = async () => {
@@ -99,9 +104,7 @@ export default function Weapon() {
                 onSale,
                 characterID,
               } = await weaponContract.metadataOf(_value.toString());
-              
-              console.log(characterID.toString());
-              
+                            
               const isWeaponAlreadyAdded = weapons.some(
                 (weapon) => weapon.id === _value.toString()
               );
@@ -142,8 +145,6 @@ export default function Weapon() {
     try {
       if (mintingName === '') return;
 
-      console.log('Minting ' + mintingName + '...');
-
       const options = {
         gasLimit: 3000000,
       };
@@ -151,9 +152,9 @@ export default function Weapon() {
       await weaponContract.safeMint(mintingName, options);
 
       setMintingName('');
-      console.log('Minted successfully!');
+      notify('Minted successfully!');
     } catch (error) {
-      console.error('Error minting:', error);
+      notifyError('Error minting:', error);
     }
   };
 
@@ -175,15 +176,14 @@ export default function Weapon() {
 
         const lastLog = logs[logs.length - 1];
         const { _value } = lastLog.args;
-        console.log(id, _value.toString())
-        
+
         await weaponContract.addWeaponToCharacter(id, _value.toString());
-        console.log('succesful equip!')
+        notify('Succesful equip!')
       } catch (error) {
         console.error('Error fetching characters:', error);
       }
     } else {
-      console.log("user has no character")
+      notifyError("user has no character")
     }
 
   }
@@ -374,6 +374,7 @@ export default function Weapon() {
           </form>
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 }

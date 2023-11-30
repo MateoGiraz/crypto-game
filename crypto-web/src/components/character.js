@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { characterAbi } from '../abi/characterAbi';
 import { characterAddress, experienceAddress } from '../addresses';
 import { experienceAbi } from '../abi/experienceAbi';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Character() {
   const [mintPrice, setMintPrice] = useState('');
@@ -30,6 +32,9 @@ export default function Character() {
     experienceAbi,
     signer
   );
+
+  const notify = (message) => toast.success(message);
+  const notifyError = (message) => toast.error(message);
 
   useEffect(() => {
     const fetchMintPrice = async () => {
@@ -112,8 +117,6 @@ export default function Character() {
     try {
       if (mintingName === '') return;
 
-      console.log('Minting ' + mintingName + '...');
-
       const options = {
         gasLimit: 3000000,
       };
@@ -121,9 +124,9 @@ export default function Character() {
       await characterContract.safeMint(mintingName, options);
 
       setMintingName('');
-      console.log('Minted successfully!');
+      notify('Minted successfully!');
     } catch (error) {
-      console.error('Error minting:', error);
+      notifyError('Error minting:', error);
     }
   };
 
@@ -131,8 +134,6 @@ export default function Character() {
     try {
       if(experienceNumber === 0) 
         return;
-
-      console.log('Buying ' + experienceNumber + ' experience tokens...');  
       
       const options = {
         gasLimit: 3000000,
@@ -144,9 +145,9 @@ export default function Character() {
       );
 
       setExperienceNumber(0);
-      console.log('Tokens purchased successfully!');
+      notify('Tokens purchased successfully!');
     } catch (error) {
-      console.error('Error buying tokens:', error);
+      notifyError('Error buying tokens:', error);
     }
   };
 
@@ -337,6 +338,7 @@ export default function Character() {
           )}
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 }

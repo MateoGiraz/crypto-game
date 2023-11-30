@@ -2,6 +2,8 @@ import { ethers } from 'ethers';
 import { rubieAbi } from '../abi/RubieAbi';
 import { useState, useEffect } from 'react';
 import { rubieAddress } from '../addresses';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Rubie(){
   const [price, setPrice] = useState('');
@@ -13,6 +15,9 @@ export default function Rubie(){
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner();
   const rubieContract = new ethers.Contract(rubieAddress, rubieAbi, signer)
+
+  const notify = (message) => toast.success(message);
+  const notifyError = (message) => toast.error(message);
 
   useEffect(() => {
     const fetchPrice = async () => {
@@ -61,8 +66,6 @@ export default function Rubie(){
     try {
       if(numberOfTokens === 0) 
         return;
-
-      console.log('Buying ' + numberOfTokens + ' tokens...');  
       
       const options = {
         gasLimit: 3000000,
@@ -74,10 +77,10 @@ export default function Rubie(){
         options
       );
 
+      notify('Tokens purchased successfully!')
       setNumberOfTokens(0);
-      console.log('Tokens purchased successfully!');
     } catch (error) {
-      console.error('Error buying tokens:', error);
+      notifyError('Error buying tokens:', error)
     }
   };
 
@@ -206,6 +209,7 @@ export default function Rubie(){
         </form>
       </div>
     </main>
+    <ToastContainer />
   </div>
   )
 }
