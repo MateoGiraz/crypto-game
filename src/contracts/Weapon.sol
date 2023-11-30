@@ -252,7 +252,7 @@ function collectFee() external override {
     ) external override isTokenOwner(_weaponId, msg.sender){
         require(_owners[_weaponId] == msg.sender, "Not authorized to operate the weapon");
         ICharacter characterContract = ICharacter(_characterContract);
-        //require(characterContract.ownedBy(msg.sender) == _characterId, "Not authorized to operate the character");
+        require(_owners[_weaponId] == msg.sender && characterContract.ownerOf(_characterId) == msg.sender, "Tokens from different owners");
         require(_owners[_weaponId] == msg.sender, "Not authorized to operate the weapon");
         require(_weaponId > 0 && _weaponId <= _totalSupply, "Invalid _weaponId");
         require(_characterId > 0 && _characterId <= characterContract.totalSupply(), "Invalid _characterId");
