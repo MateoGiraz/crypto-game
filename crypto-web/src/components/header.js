@@ -3,18 +3,21 @@ import { rubieAbi } from '../abi/RubieAbi';
 import { useState, useEffect } from 'react';
 import { characterAbi } from '../abi/characterAbi';
 import { weaponAbi } from '../abi/weaponAbi';
-import { characterAddress, rubieAddress, weaponAddress } from '../addresses';
+import { characterAddress, experienceAddress, rubieAddress, weaponAddress } from '../addresses';
+import { experienceAbi } from '../abi/experienceAbi';
 
 export default function Header() {
   const [balance, setBalance] = useState(0);
   const [characters, setCharacters] = useState(0);
   const [weapons, setWeapons] = useState(0);
+  const [experience, setExperience] = useState(0);
 
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner();
   const rubieContract = new ethers.Contract(rubieAddress, rubieAbi, signer)
   const characterContract = new ethers.Contract(characterAddress, characterAbi, signer)
   const weaponContract = new ethers.Contract(weaponAddress, weaponAbi, signer)
+  const experiencerContract = new ethers.Contract(experienceAddress, experienceAbi, signer);
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -46,7 +49,18 @@ export default function Header() {
         console.error('Error fetching weapons:', error);
       }
     };
-  
+
+    const fetchExperience = async () => {
+      try {
+        const address = await signer.getAddress();
+        const balance = await experiencerContract.balanceOf(address);
+        setExperience(balance.toString())
+      } catch (error) {
+        console.error('Error fetching experience:', error);
+      }
+    };
+
+    fetchExperience()
     fetchBalance()
     fetchCharacters()
     fetchWeapons()
@@ -65,7 +79,7 @@ export default function Header() {
         <IconStar className="h-6 w-6" />
         <div>
           <h2 className="text-lg font-semibold">Experience</h2>
-          <p className="text-sm">5678 XP</p>
+          <p className="text-sm">{experience} XP</p>
         </div>
       </div>
       <div className="flex items-center space-x-4">
