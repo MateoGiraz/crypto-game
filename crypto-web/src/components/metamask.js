@@ -15,7 +15,7 @@ export default function Metamask({handleConnect}){
           </div>
           <button
             onClick={handleConnect}
-            class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 w-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+            class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 w-full hover:bg-gray-200 transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
