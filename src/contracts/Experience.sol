@@ -145,7 +145,8 @@ contract Experience is IExperience {
     uint256 attackPoints = _amount / 20;
 
     characterContract.upgradeStats(_characterId, attackPoints, armorPoints, sellPrice);
-    rubieContract.safeTransferFrom(msg.sender, address(this), amountAfterCommission);
+    rubieContract.addBalance(address(this), amountAfterCommission);
+    rubieContract.removeBalance(msg.sender, amountAfterCommission);
 
     // Aumentar el balance de Experience por la comisión
     balances[address(this)] += commission;

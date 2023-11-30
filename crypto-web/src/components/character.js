@@ -1,7 +1,8 @@
 import { ethers } from 'ethers';
 import { useState, useEffect } from 'react';
 import { characterAbi } from '../abi/characterAbi';
-import { characterAddress } from '../addresses';
+import { characterAddress, experienceAddress } from '../addresses';
+import { experienceAbi } from '../abi/experienceAbi';
 
 export default function Character() {
   const [mintPrice, setMintPrice] = useState('');
@@ -15,12 +16,18 @@ export default function Character() {
   const [armorPoints, setArmorPoints] = useState('')
   const [weapon, setWeapon] = useState('')
   const [sellPrice, setsellPrice] = useState('');
+  const [experienceNumber, setExperienceNumber] = useState('');
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
   const characterContract = new ethers.Contract(
     characterAddress,
     characterAbi,
+    signer
+  );
+  const experiencerContract = new ethers.Contract(
+    experienceAddress,
+    experienceAbi,
     signer
   );
 
@@ -117,6 +124,29 @@ export default function Character() {
       console.log('Minted successfully!');
     } catch (error) {
       console.error('Error minting:', error);
+    }
+  };
+
+  const buyExperience = async () => {
+    try {
+      if(experienceNumber === 0) 
+        return;
+
+      console.log('Buying ' + experienceNumber + ' experience tokens...');  
+      
+      const options = {
+        gasLimit: 3000000,
+      };
+
+      await experiencerContract.buy(
+        experienceNumber,
+        options
+      );
+
+      setExperienceNumber(0);
+      console.log('Tokens purchased successfully!');
+    } catch (error) {
+      console.error('Error buying tokens:', error);
     }
   };
 
@@ -294,10 +324,12 @@ export default function Character() {
               <div class="border-l border-gray-200 dark:border-gray-600 p-3 flex flex-col justify-center items-center md:items-center">
               <input
               class="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-3/4"
-              placeholder="Tokens to buy..."
+              placeholder="XP to buy..."
               type="number"
+              value={experienceNumber}
+              onChange={(e) => setExperienceNumber(e.target.value)}
             />
-                <button class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 mt-4 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-indigo-500 text-white text-secondary-foreground hover:bg-secondary/80 h-10 px-3 py-2 w-3/4">
+                <button onClick={buyExperience} class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 mt-4 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-indigo-500 text-white text-secondary-foreground hover:bg-secondary/80 h-10 px-3 py-2 w-3/4">
                   Buy Experience
                 </button>
               </div>
