@@ -23,7 +23,7 @@ contract Weapon is IWeapon {
     mapping (uint256 => Metadata) _metadatas;
 
     constructor(string memory name, string memory symbol, string memory
-    tokenURI, address ownerContract, address characterContract){
+    tokenURI, address ownerContract, address characterContract) isValidName(name){
         require(bytes(symbol).length == 3, "Invalid Symbol");
         _name = name;
         _symbol = symbol;
@@ -202,11 +202,13 @@ contract Weapon is IWeapon {
 
         rubieContract.safeTransferFrom(msg.sender, _owners[_tokenId], _metadatas[_tokenId].sellPrice);
 
-        _balances[msg.sender] -= _metadatas[_tokenId].sellPrice;
-        _balances[_owners[_tokenId]] += _metadatas[_tokenId].sellPrice;
+        _balances[msg.sender] --;
+        _balances[_owners[_tokenId]] ++;
         _owners[_tokenId] = msg.sender;
         _metadatas[_tokenId].onSale = false;
         _metadatas[_tokenId].name = _newName;
+
+        emit Transfer(_owners[_tokenId], msg.sender, _tokenId);
     }
 
     function setOnSale(uint256 _tokenId, bool _onSale) external override isValidTokenId(_tokenId) {

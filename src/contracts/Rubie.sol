@@ -13,7 +13,7 @@ contract Rubie is IRubie {
     string Symbol;
     uint256 Price;
     address ownersContract;
-    uint256 private _totalSupply;
+    uint256 _totalSupply;
 
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) allowed;
@@ -22,7 +22,7 @@ contract Rubie is IRubie {
         string memory _name,
         string memory _symbol,
         address _ownersContract
-    ) {
+    ) isValidName(_name)  {
         require(bytes(_symbol).length == 3, "Invalid Symbol");
         _totalSupply = 0;
         ownersContract = _ownersContract;
@@ -184,6 +184,11 @@ contract Rubie is IRubie {
             _value == 0 || allowed[msg.sender][_spender] == 0,
             "Invalid allowance amount. Set to zero first"
         );
+        _;
+    }
+
+    modifier isValidName(string memory name) {
+        require(bytes(name).length > 0, "Invalid _name");
         _;
     }
 

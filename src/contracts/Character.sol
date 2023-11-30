@@ -15,7 +15,7 @@ contract Character is ICharacter {
     address OwnersContract;
     address RubiesContract;
     uint256 MintPrice;
-    uint256 private _totalSupply;
+    uint256 _totalSupply;
 
     mapping(address => uint256) balances;
     mapping(address => mapping(uint256 => address)) allowed;
@@ -28,7 +28,7 @@ contract Character is ICharacter {
         string memory _symbol,
         string memory _tokenURI,
         address _ownersContract
-    ) {
+    ) isValidName(_name) {
         require(bytes(_symbol).length == 3, "Invalid Symbol");
         _totalSupply = 0;
         MintPrice = 0;
