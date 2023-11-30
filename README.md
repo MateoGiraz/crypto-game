@@ -17,3 +17,66 @@
 `git add .`  
 `git commit -m "<<your comments here>>"`  
 `git push origin main`
+
+## Descripción de proyecto:
+
+El proyecto consta de una Dapp con las interfaces proporcionadas implementadas en solidity y un frontend en react (Version 17.02).
+El proyecto consta de un ecosistema de contratos inteligentes destinados a gestionar un sistema de personajes y armas no fungibles (NFTs).
+
+- Contrato OwnersContract:
+
+Funciona como un registro centralizado de propietarios y sus contratos asociados.
+Otorga autoridad a los propietarios para realizar ciertas operaciones en los contratos del ecosistema.
+
+- Contrato Rubie:
+
+Gestiona la economia interna del sistema (Rubíes).
+Permite la transferencia de Rubíes entre usuarios para intercambiar para por armas o personajes (NFTs).
+
+- Contrato Experience: 
+
+Gestiona la experiencia  de los jugadores, se necesita para comprar algunos personajes. 
+
+- Contrato Character:
+
+Este contrato representa la lógica central de los personajes no fungibles. Permite la creación, transferencia, compra y mejora de personajes.
+Los personajes tienen atributos como puntos de ataque, puntos de armadura, y se pueden equipar con hasta tres armas diferentes.
+Los propietarios de personajes pueden ponerlos en venta y establecer precios de venta.
+
+- Contrato Weapon:
+
+Este contrato gestiona la creación, transferencia de las armas.
+Las armas pueden ser poseídas por personajes y equipadas desde este contrato.
+
+
+### Errores conocidos
+
+- El require del allowance en los contratos de character y de weapon no quedaron implementados.
+  
+
+## Diagrama del proyecto
+
+![Alt text](<Captura de pantalla 2023-11-30 a la(s) 17.08.13.png>)
+
+Para un diagrama mas detallado:
+https://drive.google.com/file/d/1G9mo3vzLXgGcXj_GnnwxDneKImphGFiZ/view?usp=sharing
+  
+
+## Pasos para hacer el setup del repositorio
+
+- clonar repositorio
+
+- instalar los modulos (npm install)
+
+- probar los test (npm run test)
+
+## Pasos para hacer el Deploy del proyecto
+
+- clonar repositorio
+
+- instalar los modulos (npm install)
+
+- deploy (npm run deploy)
+  
+
+## Mateo Giraz (241195) - Joaquin Rodríguez (231355) - Santiago Villar (256345)
