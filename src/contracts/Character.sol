@@ -28,6 +28,7 @@ contract Character is ICharacter {
         string memory _tokenURI,
         address _ownersContract
     ) {
+        require(bytes(_symbol).length == 3, "Invalid Symbol");
         _totalSupply = 0;
         MintPrice = 0;
         Name = _name;

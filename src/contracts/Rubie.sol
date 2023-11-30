@@ -23,6 +23,7 @@ contract Rubie is IRubie {
         string memory _symbol,
         address _ownersContract
     ) {
+        require(bytes(_symbol).length == 3, "Invalid Symbol");
         _totalSupply = 0;
         ownersContract = _ownersContract;
         Name = _name;
