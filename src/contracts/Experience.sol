@@ -27,7 +27,7 @@ contract Experience is IExperience {
         Name = _name;
         Symbol = _symbol;
         OwnersContract = _ownersContract;
-        Price = MAX_INTEGER;
+        Price = 1;
     }
     function name() external view override returns (string memory _name) {
         _name = Name;
