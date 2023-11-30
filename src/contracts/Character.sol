@@ -28,6 +28,7 @@ contract Character is ICharacter {
         string memory _tokenURI,
         address _ownersContract
     ) {
+        require(bytes(_symbol).length == 3, "Invalid Symbol");
         _totalSupply = 0;
         MintPrice = 0;
         Name = _name;
@@ -328,6 +329,15 @@ contract Character is ICharacter {
         returns (uint256 _currentTokenID)
     {
         _currentTokenID = _totalSupply;
+    }
+
+    function weaponCount (uint256 _tokenId) external view returns (uint256 _weaponCount) {
+        _weaponCount = 0;
+        for (uint256 i = 0; i < 3; i++) {
+            if (metadatas[_tokenId].weapon[i] != 0) {
+                _weaponCount++;
+            }
+        }
     }
 
     function mintPrice() external view override returns (uint256 _mintPrice) {
