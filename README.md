@@ -8,7 +8,7 @@
 
 ### [Enlace al repositorio](https://github.com/TallerTecnologias2/obligatorio-2023-02-giraz-rodriguez-villar-1)
 ### [Video presentando el obligatorio realizado](https://www.youtube.com/watch?v=CBhjbTMVV1Q&ab_channel=MateoGiraz)
-Tuvimos problemas a la hora de grabar el video por lo que el resultado no tiene la mejor calidad (se ve trancado). En vista de la cercanía a la entrega, solo pudimos volver a grabar la demo de frontend, que es la última parte del video.
+Tuvimos problemas a la hora de grabar el video por lo que el resultado no tiene la mejor calidad (se ve trancado). En vista de la cercanía a la entrega, solo pudimos volver a grabar la demo de frontend, que es la última parte del video. En el video se comenta el uso de GitFlow y buenas practicas alrededor del repositorio, se muestran los commits, pull requests y actions de GitHub. Tabmién se muestran buenas prácticas de código y se enseña el script de deploy. Finalmente se muestra el frontend y sus funcionalidades.
 ### [Demo frontend](https://crypto.giraz.xyz/)
 ## Descripción de proyecto:
 
@@ -44,7 +44,9 @@ Las armas pueden ser poseídas por personajes y equipadas desde este contrato.
 ### Errores conocidos
 
 - El require del allowance en los contratos de character y de weapon no quedaron implementados.
-  
+- No se implementa el siguiente dev
+ @dev When transfer is complete, this function checks if `_to` is a smart contract (code size > 0), 
+ if so, it calls `onERC721Received` on `_to` and throws if the return value is not 
 
 ## Diagrama del proyecto
 
