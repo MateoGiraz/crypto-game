@@ -35,7 +35,7 @@ Permite la transferencia de Rubíes entre usuarios para intercambiar para por ar
 
 - Contrato Experience: 
 
-Gestiona la experiencia  de los jugadores, se necesita para comprar algunos personajes. 
+Gestiona la experiencia  de los jugadores, se necesita para comprar algunos personajes y puede comprarse para sumar estadísticas.
 
 - Contrato Character:
 
@@ -74,9 +74,16 @@ https://drive.google.com/file/d/1G9mo3vzLXgGcXj_GnnwxDneKImphGFiZ/view?usp=shari
 
 - clonar repositorio
 
-- instalar los modulos (npm install)
+- instalar los modulos del proyecto (npm install)
 
-- deploy (npm run deploy)
-  
+- instalar los modulos de frontend (cd crypto-web, npm install)
+
+- configurar url y account en hardhat.config.js
+
+- ejecutar script de deploy (npm run deploy)
+
+- configurar las addresses de los contracts en crypto-web/src/addresses.js
+
+- ejecutar deploy del frontend (cd crypto-web, vercel --prod)
 
 ## Mateo Giraz (241195) - Joaquin Rodríguez (231355) - Santiago Villar (256345)
