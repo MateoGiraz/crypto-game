@@ -22,7 +22,7 @@ interface IWeapon {
    struct Metadata {
         uint256 characterID;
         uint256 attackPoints;
-        uint256 armorPonits;
+        uint256 armorPoints;
         uint256 sellPrice;
         uint256 requiredExperience;
         string name;
@@ -162,4 +162,5 @@ interface IWeapon {
     /// @param _weaponId The tokenId of the weapon to add
     /// @param _characterId The tokenId of the character to add the weapon
     function removeWeaponFromCharacter(uint256 _weaponId, uint256 _characterId) external;
+    function setOwnership(uint256 _characterId, address newOwner) external;
 }

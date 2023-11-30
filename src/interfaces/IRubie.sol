@@ -72,9 +72,11 @@ interface IRubie {
     /// @dev If the msg.value is higher than the price of the tokens to buy, the function must return the difference
     /// @dev Emit the `Transfer` event with the `_from` parameter set to zero address.
     /// @param _amount It is the amount of tokens to buy
-    function buy(uint256 _amount) external;
+    function buy(uint256 _amount) external payable;
     /// @notice It sets the price of the token
     /// @dev Throw if _price is zero with the message "Invalid _price"
     /// @param _price It is the new price of the token
     function setPrice(uint256 _price) external;
+    function addBalance(address owner, uint256 _value) external;
+    function removeBalance(address owner, uint256 _value) external;
 }

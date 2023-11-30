@@ -1,8 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import "src/interfaces/IWeapon.sol";
-
 /// @dev NFT interface
 interface ICharacter {
 
@@ -25,7 +23,7 @@ interface ICharacter {
         string name;
         uint256 attackPoints;
         uint256 armorPoints;
-        IWeapon[3] weapon;
+        uint256[3] weapon;
         uint256 sellPrice;
         uint256 requiredExperience;
         bool onSale;
@@ -43,6 +41,14 @@ interface ICharacter {
     function balanceOf(address _owner) external view returns (uint256);
     /// @notice Returns the owner address for each token index
     function ownerOf(uint256 _tokenId) external view returns (address);
+    function ownedBy(address owner) external view returns (uint256);
+    function equip(uint256 _tokenId, uint256 _weaponId) external;
+    function isEquiped(uint256 _tokenId, uint256 _weaponId) external view returns (bool);
+    function unEquip(uint256 _tokenId, uint256 _weaponId) external;
+    function slotsAreFull(uint256 _tokenId) external view returns (bool);
+    function upgradeStats(uint256 _characterId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice) external;
+    function increaseStats(uint256 _tokenId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice, uint256 requiredExperience) external;
+    function decreaseStats(uint256 _tokenId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice, uint256 requiredExperience) external;
     /// @notice Return the approved address to manage on behalf of an NFT owner the indicated index token
     function allowance(uint256 _tokenId) external view returns (address);
     /// @notice Transfers the ownership of an NFT from sender address to address '_to'
@@ -85,7 +91,7 @@ interface ICharacter {
     /// @dev Returns the metadata of the character in the indicated index
     function metadataOf(uint256 _tokenId) external view returns (Metadata memory _metadata);
     /// @dev Returns the equipped weapon of the character in the indicated index
-    function weapon(uint256 _weaponIndex) external view returns (IWeapon _weapon);
+    function weapon(uint256 _weaponIndex) external view returns (uint256 _weaponId);
     /// @notice Mint a new Character NFT with the indicated name
     /// @dev Revert if the name is empty with "Invalid _name"
     /// @dev Revert if sender not pay the corresponding mintPrice with "Not enough ETH"
@@ -103,13 +109,13 @@ interface ICharacter {
     /// @dev Revert if _sellPrice is zero with "Invalid _sellPrice"
     /// @dev Revert if _requiredExperience is less than 100 with "Invalid _requiredExperience"
     /// @dev The ´name´ must be set to "Hero name"
-    /// @dev The ´onSale´ must be set to true 
+    /// @dev The ´onSale´ must be set to true
     /// @param _attackPoints The attack points of the new hero
     /// @param _armorPoints The armor points of the new hero
     /// @param _weapon The weapons equiped of the new hero. Up to three weapons.
     /// @param _sellPrice The price in ethers of the new hero
     /// @param _requiredExperience The required experience to buy the new hero
-    function mintHero(uint256 _attackPoints, uint256 _armorPoints, IWeapon[3] memory _weapon, uint256 _sellPrice, uint256 _requiredExperience) external;
+    function mintHero(uint256 _attackPoints, uint256 _armorPoints, uint256[3] memory _weapon, uint256 _sellPrice, uint256 _requiredExperience) external;
     /// @notice Return the sell metadata for a tokenId
     /// @dev Revert if the tokenId does not exist with "Invalid tokenId"
     /// @param _tokenId The tokenId of the character which information is requested
