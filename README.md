@@ -1,6 +1,12 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/B8-f4DG0)
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=12461672&assignment_repo_type=AssignmentRepo)
-# Gaming platform
+
+# Obligatorio de Taller de Tecnologías 2 - Gaming Platform
+
+## Integrantes del equipo: Mateo Giraz (241195) - Joaquin Rodríguez (231355) - Santiago Villar (256345)
+### Grupo M6C- Profesor: Itay Brenner
+
+## Video presentando el obligatorio realizado:  
 
 ## Setup
 
@@ -21,7 +27,7 @@
 ## Descripción de proyecto:
 
 El proyecto consta de una Dapp con las interfaces proporcionadas implementadas en solidity y un frontend en react (Version 17.02).
-El proyecto consta de un ecosistema de contratos inteligentes destinados a gestionar un sistema de personajes y armas no fungibles (NFTs).
+El proyecto consta de un ecosistema de contratos inteligentes destinados a gestionar una plataforma gaming usando Blockchain, token fungibles y NFTs.
 
 - Contrato OwnersContract:
 
@@ -86,4 +92,14 @@ https://drive.google.com/file/d/1G9mo3vzLXgGcXj_GnnwxDneKImphGFiZ/view?usp=shari
 
 - ejecutar deploy del frontend (cd crypto-web, vercel --prod)
 
-## Mateo Giraz (241195) - Joaquin Rodríguez (231355) - Santiago Villar (256345)
+## Desarrollo del obligatorio
+
+Tras haber desarrollado nuestro obligatorio podemos destacar tres aspectos de nuestro desarrollo:
+
+- Uso de modifiers: Para los requerimientos de cada función utilizamos modifiers, ya que notamos que muchas funciones tenían varios require en común. De esta forma obtenemos un código reutilizable y un contrato más limpio
+
+- Creación de funciones auxiliares: Creamos las funciones auxiliares que nos parecieron necesarias para implementar las interfaces en cada contrato, asegurándonos de que estas solo puedan ser llamadas por los contratos especificos.
+
+- Creación de tests: Hicimos tests para cada contrato, con el fin de garantizar que al hacer cambios en el código no se esté rompiendo ninguna funcionalidada. En la siguiente imagen podemos observar los tests realizados:
+<img width="367" alt="image" src="https://github.com/TallerTecnologias2/obligatorio-2023-02-giraz-rodriguez-villar-1/assets/91506401/34b2a667-ac47-4a00-bbc7-410fcd61ca64">
+
