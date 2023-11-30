@@ -262,6 +262,7 @@ contract Character is ICharacter {
         uint256 _sellPrice,
         uint256 _requiredExperience
     ) external override
+    onlyOwner()
     validAttackPoints(_attackPoints)
     validArmorPoints(_armorPoints)
     validSellPrice(_sellPrice)
@@ -307,8 +308,9 @@ contract Character is ICharacter {
         IRubie rubieContract = IRubie(ownersContract.addressOf("Rubie"));
         IWeapon weaponContract = IWeapon(ownersContract.addressOf("Weapon"));
 
-        require(_tokenId > 0 && _tokenId <= _totalSupply, "Invalid tokenId");
+    
         require(rubieContract.balanceOf(msg.sender) >= metadatas[_tokenId].sellPrice, "Not enough ETH");
+        require(_tokenId > 0 && _tokenId <= _totalSupply, "Invalid tokenId");
         require(metadatas[_tokenId].onSale, "Character not on sale");
         require(rubieContract.balanceOf(msg.sender) >= metadatas[_tokenId].requiredExperience, "Insufficient experience");
 
@@ -326,7 +328,7 @@ contract Character is ICharacter {
         owned[msg.sender] = _tokenId;
     }
 
-    function setOnSale(uint256 _tokenId, bool _onSale) external override isValidTokenId(_tokenId) {
+    function setOnSale(uint256 _tokenId, bool _onSale) external override isValidTokenId(_tokenId) isTokenOwner(_tokenId, msg.sender) {
         metadatas[_tokenId].onSale = _onSale;
     }
 
@@ -352,11 +354,11 @@ contract Character is ICharacter {
         _mintPrice = MintPrice;
     }
 
-    function setMintingPrice(uint256 _mintPrice) external override {
+    function setMintingPrice(uint256 _mintPrice) external override onlyOwner() {
         MintPrice = _mintPrice;
     }
 
-    function collectFee() external override {
+    function collectFee() external override onlyOwner() {
         require(address(this).balance > 0, "zero balance");
         require(msg.sender ==  OwnersContract, "Not owners contract");
         payable(OwnersContract).transfer(address(this).balance);
@@ -387,6 +389,11 @@ contract Character is ICharacter {
     modifier isValidTokenId(uint256 _tokenId) {
         require(_tokenId > 0 && _tokenId <= _totalSupply, "Invalid tokenId");
         _;
+    }
+
+    modifier onlyOwner() {
+        require(IOwnersContract(OwnersContract).owners(msg.sender), "Not the owner");
+        _;
     } 
 
     modifier isValidAddress(address _address) {
@@ -395,7 +402,7 @@ contract Character is ICharacter {
     }
 
     modifier isTokenOwner(uint256 _tokenId, address _address) {
-        require(owners[_tokenId] == _address, "Not the owner");        
+        require(owners[_tokenId] == _address, "Not authorized");        
         _;
     }
 

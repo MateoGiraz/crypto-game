@@ -156,6 +156,7 @@ contract Weapon is IWeapon {
         uint256 _sellPrice,
         uint256 _requiredExperience
     ) external override
+    onlyOwners()
     validAttackPoints(_attackPoints)
     validArmorPoints(_armorPoints)
     validSellPrice(_sellPrice)
@@ -214,8 +215,7 @@ contract Weapon is IWeapon {
         emit Transfer(_owners[_tokenId], msg.sender, _tokenId);
     }
 
-    function setOnSale(uint256 _tokenId, bool _onSale) external override isValidTokenId(_tokenId) {
-        require(_owners[_tokenId] == msg.sender, "Not the owner");
+    function setOnSale(uint256 _tokenId, bool _onSale) external override isTokenOwner(_tokenId, msg.sender) isValidTokenId(_tokenId) {
         _metadatas[_tokenId].onSale = _onSale;
     }
 
@@ -232,13 +232,12 @@ contract Weapon is IWeapon {
         mintPrice = _mintPrice;
     }
 
-    function setMintPrice(uint256 mintPrice) external override {
+    function setMintPrice(uint256 mintPrice) external override onlyOwners() {
         require(mintPrice > 0, "Invalid _mintPrice");
         _mintPrice = mintPrice;
     }
 
-    function collectFee() external override {
-        require(msg.sender == _ownerContract, "Not owners contract");
+    function collectFee() external override onlyOwners() {
         require(address(this).balance > 0, "zero balance");
         
         payable(_ownerContract).transfer(address(this).balance);
@@ -247,8 +246,11 @@ contract Weapon is IWeapon {
     function addWeaponToCharacter(
         uint256 _weaponId,
         uint256 _characterId
-    ) external override {
+    ) external override isTokenOwner(_weaponId, msg.sender){
+        require(_owners[_weaponId] == msg.sender, "Not authorized to operate the weapon");
         ICharacter characterContract = ICharacter(_characterContract);
+        //require(characterContract.ownedBy(msg.sender) == _characterId, "Not authorized to operate the character");
+        require(_owners[_weaponId] == msg.sender, "Not authorized to operate the weapon");
         require(_weaponId > 0 && _weaponId <= _totalSupply, "Invalid _weaponId");
         require(_characterId > 0 && _characterId <= characterContract.totalSupply(), "Invalid _characterId");
         require(!characterContract.isEquiped(_characterId, _weaponId), "Weapon already equipped");
@@ -266,7 +268,7 @@ contract Weapon is IWeapon {
     function removeWeaponFromCharacter(
         uint256 _weaponId,
         uint256 _characterId
-    ) external override {
+    ) external override isTokenOwner(_weaponId, msg.sender) {
         ICharacter characterContract = ICharacter(_characterContract);
         require(_weaponId > 0 && _weaponId <= _totalSupply, "Invalid _weaponId");
         require(_characterId > 0 && _characterId <= characterContract.totalSupply(), "Invalid _characterId");
@@ -315,7 +317,7 @@ contract Weapon is IWeapon {
     }
 
     modifier isTokenOwner(uint256 _tokenId, address _address) {
-        require(_owners[_tokenId] == _address, "Not the owner");        
+        require(_owners[_tokenId] == _address, "Not authorized");        
         _;
     }
 
@@ -355,6 +357,11 @@ contract Weapon is IWeapon {
 
     modifier validRequiredExperience(uint256 _requiredExperience) {
         require(_requiredExperience > 10, "Invalid _requiredExperience");
+        _;
+    }
+
+    modifier onlyOwners() {
+        require(IOwnersContract(_ownerContract).owners(msg.sender), "Not the owner");
         _;
     }
 }
