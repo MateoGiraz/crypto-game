@@ -4,6 +4,7 @@ pragma solidity 0.8.16;
 import "../interfaces/IExperience.sol";
 import "../interfaces/IOwnersContract.sol";
 import "../interfaces/IRubie.sol";
+import "../interfaces/ICharacter.sol";
 import "../interfaces/IERC721TokenReceiver.sol";
 
 contract Experience is IExperience {
@@ -15,12 +16,13 @@ contract Experience is IExperience {
     string Symbol;
     uint256 Price;
     address OwnersContract;
-    uint256 private _totalSupply;
+    uint256 _totalSupply;
 
     mapping (address => uint256) balances;
     mapping (address => mapping (address => uint256)) allowed;
 
-    constructor(string memory _name, string memory _symbol, address _ownersContract) {
+    constructor(string memory _name, string memory _symbol, address _ownersContract) isValidName(_name) {
+        require(bytes(_symbol).length == 3, "Invalid Symbol");
         _totalSupply = 0;
         Name = _name;
         Symbol = _symbol;
@@ -64,7 +66,6 @@ contract Experience is IExperience {
         balances[msg.sender] -= _value;
         balances[_to] += _value;
         emit Transfer(msg.sender, _to, _value);
-        _checkERC721Receiver(_to, 0);
         result = true;
     }
 
@@ -84,7 +85,6 @@ contract Experience is IExperience {
         balances[_to] += _value;
         allowed[_from][msg.sender] -= _value;
         emit Transfer(_from, _to, _value);
-        _checkERC721Receiver(_to, 0);
         result = true;
     }
 
@@ -109,11 +109,23 @@ contract Experience is IExperience {
 
         uint totalPrice = Price * _amount;
         require(rubieContract.balanceOf(msg.sender) >= totalPrice, "Insufficient balance");
-        
+
+        address characterAddress = IOwnersContract(OwnersContract).addressOf("Character");
+        ICharacter characterContract = ICharacter(characterAddress);
+        uint256 _characterId = characterContract.ownedBy(msg.sender);
+
+        uint256 sellPrice = totalPrice /10;
+        uint256 armorPoints = _amount /10;
+        uint256 attackPoints = _amount /20;
+
         /// @dev Increase the sell price of the user charater for the 10% of the price.
+
+
         /// @dev Increase the armor points of the user charater in 10% of the experience buyed.
-        /// @dev Increase the weapon points of the user charater in 5% of the experience buyed.  
-        
+
+        /// @dev Increase the attack points of the user charater in 5% of the experience buyed.
+
+        characterContract.upgradeStats(_characterId, attackPoints, armorPoints, sellPrice);
         rubieContract.safeTransferFrom(msg.sender, address(this), totalPrice);
         balances[msg.sender] += _amount;
 
@@ -148,7 +160,7 @@ contract Experience is IExperience {
     }
 
     modifier validValue(uint256 _value) {
-        require(_value > 0, "Invalid _value");
+        require(_value >= 0, "Invalid _value");
         _;
     }
 
@@ -162,6 +174,11 @@ contract Experience is IExperience {
             _value == 0 || allowed[msg.sender][_spender] == 0,
             "Invalid allowance amount. Set to zero first"
         );
+        _;
+    }
+
+    modifier isValidName(string memory name) {
+        require(bytes(name).length > 0, "Invalid _name");
         _;
     }
 
@@ -183,4 +200,11 @@ contract Experience is IExperience {
             );
         }
     }
+
+    function mintForTesting(address _to, uint256 _amount) external {
+    balances[_to] += _amount;
+    _totalSupply += _amount;
+    emit Transfer(address(0), _to, _amount);
+}
+
 }

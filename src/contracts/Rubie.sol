@@ -13,7 +13,7 @@ contract Rubie is IRubie {
     string Symbol;
     uint256 Price;
     address ownersContract;
-    uint256 private _totalSupply;
+    uint256 _totalSupply;
 
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) allowed;
@@ -22,7 +22,8 @@ contract Rubie is IRubie {
         string memory _name,
         string memory _symbol,
         address _ownersContract
-    ) {
+    ) isValidName(_name)  {
+        require(bytes(_symbol).length == 3, "Invalid Symbol");
         _totalSupply = 0;
         ownersContract = _ownersContract;
         Name = _name;
@@ -69,7 +70,6 @@ contract Rubie is IRubie {
         balances[msg.sender] -= _value;
         balances[_to] += _value;
         emit Transfer(msg.sender, _to, _value);
-        _checkERC721Receiver(_to, 0);
     }
 
     function safeTransferFrom(
@@ -87,7 +87,6 @@ contract Rubie is IRubie {
         balances[_from] -= _value;
         balances[_to] += _value;
         emit Transfer(_from, _to, _value);
-        _checkERC721Receiver(_to, 0);
     }
 
     function approve(address _spender, uint256 _value) 
@@ -103,6 +102,22 @@ contract Rubie is IRubie {
 
     function price() external view override returns (uint256 _price) {
         _price = Price;
+    }
+
+    function addBalance(address owner, uint256 _value) external override {
+        address charactersContract = IOwnersContract(ownersContract).addressOf("Character");
+        require(msg.sender ==  charactersContract, "Not called by characters contract");
+
+        balances[owner] += _value;
+        emit Transfer(address(0), msg.sender, _value);
+    }
+
+    function removeBalance(address owner, uint256 _value) external override {
+        address charactersContract = IOwnersContract(ownersContract).addressOf("Character");
+        require(msg.sender ==  charactersContract, "Not called by characters contract");
+
+        balances[owner] -= _value;
+        emit Transfer(msg.sender, address(0), _value);
     }
 
     function mint(
@@ -169,6 +184,11 @@ contract Rubie is IRubie {
             _value == 0 || allowed[msg.sender][_spender] == 0,
             "Invalid allowance amount. Set to zero first"
         );
+        _;
+    }
+
+    modifier isValidName(string memory name) {
+        require(bytes(name).length > 0, "Invalid _name");
         _;
     }
 

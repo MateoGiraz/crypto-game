@@ -1,8 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import "src/interfaces/IWeapon.sol";
-
 /// @dev NFT interface
 interface ICharacter {
 
@@ -48,6 +46,7 @@ interface ICharacter {
     function isEquiped(uint256 _tokenId, uint256 _weaponId) external view returns (bool);
     function unEquip(uint256 _tokenId, uint256 _weaponId) external;
     function slotsAreFull(uint256 _tokenId) external view returns (bool);
+    function upgradeStats(uint256 _characterId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice) external;
     function increaseStats(uint256 _tokenId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice, uint256 requiredExperience) external;
     function decreaseStats(uint256 _tokenId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice, uint256 requiredExperience) external;
     /// @notice Return the approved address to manage on behalf of an NFT owner the indicated index token
@@ -110,7 +109,7 @@ interface ICharacter {
     /// @dev Revert if _sellPrice is zero with "Invalid _sellPrice"
     /// @dev Revert if _requiredExperience is less than 100 with "Invalid _requiredExperience"
     /// @dev The ´name´ must be set to "Hero name"
-    /// @dev The ´onSale´ must be set to true 
+    /// @dev The ´onSale´ must be set to true
     /// @param _attackPoints The attack points of the new hero
     /// @param _armorPoints The armor points of the new hero
     /// @param _weapon The weapons equiped of the new hero. Up to three weapons.

@@ -10,26 +10,27 @@ import "../interfaces/ICharacter.sol";
 
 contract Weapon is IWeapon {
 
-    string private _name;
-    string private _symbol;
-    string private _tokenURI;
-    uint256 private _totalSupply;
-    address private _ownerContract;
-    address private _characterContract;
-    uint256 private _mintPrice;
+    string  _name;
+    string  _symbol;
+    string  _tokenURI;
+    uint256  _totalSupply;
+    address  _ownerContract;
+    address  _characterContract;
+    uint256  _mintPrice;
     mapping (address => uint256) _balances;
     mapping (uint256 => address) _owners;
     mapping (uint256 => address) _allowances;
     mapping (uint256 => Metadata) _metadatas;
 
-    constructor(string memory _name, string memory _symbol, string memory
-    _tokenURI, address _ownerContract, address _characterContract){
-        _name = _name;
-        _symbol = _symbol;
-        _tokenURI = _tokenURI;
-        _ownerContract = _ownerContract;
-        _characterContract = _characterContract;
-        _mintPrice = 0;
+    constructor(string memory name, string memory symbol, string memory
+    tokenURI, address ownerContract, address characterContract) isValidName(name){
+        require(bytes(symbol).length == 3, "Invalid Symbol");
+        _name = name;
+        _symbol = symbol;
+        _tokenURI = tokenURI;
+        _ownerContract = ownerContract;
+        _characterContract = characterContract;
+        _mintPrice = 1;
     }
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
@@ -39,21 +40,21 @@ contract Weapon is IWeapon {
         _owners[_tokenId] = _to;
     }
 
-    function name() external view override returns (string memory _name) {
-        _name = _name;
+    function name() external view override returns (string memory name) {
+        name = _name;
     }
 
-    function symbol() external view override returns (string memory _symbol) {
-        _symbol = _symbol;
+    function symbol() external view override returns (string memory symbol) {
+        symbol = _symbol;
     }
 
     function tokenURI()
         external
         view
         override
-        returns (string memory _tokenURI)
+        returns (string memory tokenURI)
     {
-        _tokenURI = _tokenURI;
+        tokenURI = _tokenURI;
     }
 
     function totalSupply() external view override returns (uint256) {
@@ -84,6 +85,8 @@ contract Weapon is IWeapon {
     isTokenOwner(_tokenId, msg.sender)
     {
         _transfer(msg.sender, _to, _tokenId);
+        _balances[msg.sender]--;
+        _balances[_to]++;
         emit Transfer(msg.sender, _to, _tokenId);
         _checkERC721Receiver(_to, _tokenId);
     }
@@ -96,6 +99,8 @@ contract Weapon is IWeapon {
         require(msg.sender == _from || msg.sender == _allowances[_tokenId], "Not authorized");
         
         _transfer(_from, _to, _tokenId);
+        _balances[_from]--;
+        _balances[_to]++;
         emit Transfer(_from, _to, _tokenId);
         _checkERC721Receiver(_to, _tokenId);
     }
@@ -117,15 +122,15 @@ contract Weapon is IWeapon {
         external
         view
         override
-        returns (address _characterContract)
+        returns (address characterContract)
     {
-        _characterContract = _characterContract;
+        characterContract = _characterContract;
     }
 
-    function safeMint(string memory _name) external override 
-    isValidName(_name)
+    function safeMint(string memory name) external override 
+    isValidName(name)
     hasEnoughBalance(_mintPrice)
-    hasEnoughAllowance()
+    ///hasEnoughAllowance()
     {
         _totalSupply++;
         _owners[_totalSupply] = msg.sender;
@@ -139,6 +144,9 @@ contract Weapon is IWeapon {
             false
         );
 
+        _owners[_totalSupply] = msg.sender;
+        
+        _balances[msg.sender]++;
         emit Transfer(address(0), msg.sender, _totalSupply);
     }
 
@@ -153,7 +161,7 @@ contract Weapon is IWeapon {
     validSellPrice(_sellPrice)
     validRequiredExperience(_requiredExperience) 
     hasEnoughBalance(_mintPrice) 
-    hasEnoughAllowance() 
+    ///hasEnoughAllowance() 
     {
         _totalSupply++;
         _owners[_totalSupply] = msg.sender;
@@ -166,7 +174,7 @@ contract Weapon is IWeapon {
             "Lengendary weapon name",
             true
         );
-
+        _balances[msg.sender]++;
         emit Transfer(address(0), msg.sender, _totalSupply);
     }
 
@@ -189,7 +197,7 @@ contract Weapon is IWeapon {
         require(_metadatas[_tokenId].onSale, "Weapon not on sale");
         require(_metadatas[_tokenId].requiredExperience <= 0, "Insufficient experience");
         require(_balances[msg.sender] >= _metadatas[_tokenId].sellPrice, "Insufficient balance");
-        require(_totalSupply >= _metadatas[_tokenId].sellPrice, "Insufficient allowance");//TODO: fix
+        //require(_totalSupply >= _metadatas[_tokenId].sellPrice, "Insufficient allowance");//TODO: fix
 
         ICharacter charactersContract = ICharacter(ownersContract.addressOf("Character"));
         uint256 characterToken = charactersContract.ownedBy(msg.sender);
@@ -197,12 +205,13 @@ contract Weapon is IWeapon {
 
         rubieContract.safeTransferFrom(msg.sender, _owners[_tokenId], _metadatas[_tokenId].sellPrice);
 
-        _balances[msg.sender] -= _metadatas[_tokenId].sellPrice;
-        _balances[_owners[_tokenId]] += _metadatas[_tokenId].sellPrice;
+        _balances[msg.sender] --;
+        _balances[_owners[_tokenId]] ++;
         _owners[_tokenId] = msg.sender;
         _metadatas[_tokenId].onSale = false;
         _metadatas[_tokenId].name = _newName;
 
+        emit Transfer(_owners[_tokenId], msg.sender, _tokenId);
     }
 
     function setOnSale(uint256 _tokenId, bool _onSale) external override isValidTokenId(_tokenId) {
@@ -219,13 +228,13 @@ contract Weapon is IWeapon {
         _currentTokenID = _totalSupply;
     }
 
-    function mintPrice() external view override returns (uint256 _mintPrice) {
-        _mintPrice = _mintPrice;
+    function mintPrice() external view override returns (uint256 mintPrice) {
+        mintPrice = _mintPrice;
     }
 
-    function setMintPrice(uint256 _mintPrice) external override {
-        require(_mintPrice > 0, "Invalid _mintPrice");
-        _mintPrice = _mintPrice;
+    function setMintPrice(uint256 mintPrice) external override {
+        require(mintPrice > 0, "Invalid _mintPrice");
+        _mintPrice = mintPrice;
     }
 
     function collectFee() external override {
@@ -272,6 +281,12 @@ contract Weapon is IWeapon {
         characterContract.unEquip(_characterId, _weaponId);
     }
 
+    function setOwnership(uint256 _characterId, address newOwner) external override {
+        address charactersContract = IOwnersContract(_ownerContract).addressOf("Character");
+        require(msg.sender ==  charactersContract, "Not called by characters contract");
+        _owners[_characterId] = newOwner;
+    }
+
     /// private functions
 
     function _isSmartContract(address _addr) private view returns (bool) {
@@ -305,17 +320,21 @@ contract Weapon is IWeapon {
     }
 
     modifier hasEnoughBalance(uint256 _amount) {
-        require(_balances[msg.sender] >= _amount, "Insufficient balance");
+        IOwnersContract ownersContract = IOwnersContract(_ownerContract);
+        IRubie rubieContract = IRubie(ownersContract.addressOf("Rubie"));
+        require(rubieContract.balanceOf(msg.sender) >= _amount, "Not enough ETH");
         _;
     }
 
-    modifier isValidName(string memory _name) {
-        require(bytes(_name).length > 0, "Invalid _name");
+    modifier isValidName(string memory name) {
+        require(bytes(name).length > 0, "Invalid _name");
         _;
     }
 
     modifier hasEnoughAllowance() {
-        require(0 >= _mintPrice, "Insufficient allowance");//TODO: fix
+        IOwnersContract ownersContract = IOwnersContract(_ownerContract);
+        IRubie rubieContract = IRubie(ownersContract.addressOf("Rubie"));
+        require(rubieContract.allowance(msg.sender, address(this)) >= _mintPrice, "Not enough allowance");
         _;
     }
 
