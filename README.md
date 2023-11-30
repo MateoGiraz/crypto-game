@@ -6,7 +6,7 @@
 ## Integrantes del equipo: Mateo Giraz (241195) - Joaquin Rodríguez (231355) - Santiago Villar (256345)
 ### Grupo M6C- Profesor: Itay Brenner
 
-## Video presentando el obligatorio realizado:  
+### Video presentando el obligatorio realizado:  
 
 ## Setup
 
@@ -65,7 +65,7 @@ Las armas pueden ser poseídas por personajes y equipadas desde este contrato.
 ![Alt text](<Captura de pantalla 2023-11-30 a la(s) 17.08.13.png>)
 
 Para un diagrama mas detallado:
-https://drive.google.com/file/d/1G9mo3vzLXgGcXj_GnnwxDneKImphGFiZ/view?usp=sharing
+[Diagrama UML](https://viewer.diagrams.net/?tags=%7B%7D&highlight=0000ff&edit=_blank&layers=1&nav=1&title=UML-Taller.drawio#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1G9mo3vzLXgGcXj_GnnwxDneKImphGFiZ%26export%3Ddownload)
   
 
 ## Pasos para hacer el setup del repositorio
