@@ -237,12 +237,15 @@ contract Weapon is IWeapon {
         _mintPrice = mintPrice;
     }
 
-    function collectFee() external override onlyOwners() {
-        require(address(this).balance > 0, "zero balance");
-        
-        payable(_ownerContract).transfer(address(this).balance);
-    }
+function collectFee() external override {
+    require(msg.sender == _ownerContract, "Not owners contract");
 
+    uint256 commissionBalance = address(this).balance;
+    require(commissionBalance > 0, "zero balance");
+
+
+    IOwnersContract(_ownerContract).collectFeeFromContract("Weapon"); 
+}
     function addWeaponToCharacter(
         uint256 _weaponId,
         uint256 _characterId

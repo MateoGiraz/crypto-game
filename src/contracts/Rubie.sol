@@ -131,16 +131,33 @@ contract Rubie is IRubie {
         emit Transfer(address(0), _recipient, _amount);
     }
 
-    function buy(uint256 _amount) external payable override {
-        uint256 totalPrice = (Price / 1000000000000000000) * _amount;
-        require(msg.value >= totalPrice, "Insufficient ether");
-        if (msg.value > totalPrice) {
-            payable(msg.sender).transfer(msg.value - totalPrice);
-        }
-        _totalSupply += _amount;
-        balances[msg.sender] += _amount;
-        emit Transfer(address(0), msg.sender, _amount);
+function buy(uint256 _amount) external payable override {
+    uint256 totalPrice = (Price / 1000000000000000000) * _amount;
+    require(msg.value >= totalPrice, "Insufficient ether");
+
+    // Calcular la comisión
+    uint256 commission = calculateCommission(totalPrice);
+    uint256 amountAfterCommission = totalPrice - commission;
+
+    if (msg.value > totalPrice) {
+        payable(msg.sender).transfer(msg.value - totalPrice);
     }
+
+    _totalSupply += _amount;
+    balances[msg.sender] += _amount;
+
+    // Enviar la comisión a OwnersContract
+    balances[address(this)] += commission;
+
+    emit Transfer(address(0), msg.sender, _amount);
+}
+
+// Función para calcular la comisión
+function calculateCommission(uint256 amount) private view returns (uint256) {
+    uint256 commissionPercentage = IOwnersContract(ownersContract).tokenSellFeePercentage();
+    return (amount * commissionPercentage) / 100;
+}
+
 
     function setPrice(uint256 _price) external override onlyOwners() {
         require(_price > 0, "Invalid _price");
