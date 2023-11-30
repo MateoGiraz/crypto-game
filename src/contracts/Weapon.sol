@@ -129,7 +129,7 @@ contract Weapon is IWeapon {
 
     function safeMint(string memory name) external override 
     isValidName(name)
-    hasEnoughBalance(_mintPrice)
+    ///hasEnoughBalance(_mintPrice)
     hasEnoughAllowance()
     {
         _totalSupply++;
@@ -194,7 +194,7 @@ contract Weapon is IWeapon {
         require(_metadatas[_tokenId].onSale, "Weapon not on sale");
         require(_metadatas[_tokenId].requiredExperience <= 0, "Insufficient experience");
         require(_balances[msg.sender] >= _metadatas[_tokenId].sellPrice, "Insufficient balance");
-        require(_totalSupply >= _metadatas[_tokenId].sellPrice, "Insufficient allowance");//TODO: fix
+        //require(_totalSupply >= _metadatas[_tokenId].sellPrice, "Insufficient allowance");//TODO: fix
 
         ICharacter charactersContract = ICharacter(ownersContract.addressOf("Character"));
         uint256 characterToken = charactersContract.ownedBy(msg.sender);
