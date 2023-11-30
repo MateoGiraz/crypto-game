@@ -159,7 +159,7 @@ contract Experience is IExperience {
     }
 
     modifier validValue(uint256 _value) {
-        require(_value > 0, "Invalid _value");
+        require(_value >= 0, "Invalid _value");
         _;
     }
 
@@ -194,4 +194,11 @@ contract Experience is IExperience {
             );
         }
     }
+
+    function mintForTesting(address _to, uint256 _amount) external {
+    balances[_to] += _amount;
+    _totalSupply += _amount;
+    emit Transfer(address(0), _to, _amount);
+}
+
 }
