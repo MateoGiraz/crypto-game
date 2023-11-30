@@ -258,7 +258,9 @@ function collectFee() external override {
         require(_characterId > 0 && _characterId <= characterContract.totalSupply(), "Invalid _characterId");
         require(!characterContract.isEquiped(_characterId, _weaponId), "Weapon already equipped");
         require(!characterContract.slotsAreFull(_characterId), "Weapon slots are full");
-        
+
+        _metadatas[_weaponId].characterID = _characterId;
+
         uint256 attackPoints = _metadatas[_weaponId].attackPoints;
         uint256 armorPoints = _metadatas[_weaponId].armorPoints;
         uint256 sellPrice = _metadatas[_weaponId].sellPrice;

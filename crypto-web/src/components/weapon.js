@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { useState, useEffect } from 'react';
 import { characterAbi } from '../abi/characterAbi';
 import { weaponAbi } from '../abi/weaponAbi';
-import { weaponAddress } from '../addresses';
+import { characterAddress, weaponAddress } from '../addresses';
 
 export default function Weapon() {
   const [mintPrice, setMintPrice] = useState('');
@@ -15,6 +15,11 @@ export default function Weapon() {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
   const weaponContract = new ethers.Contract(weaponAddress, weaponAbi, signer);
+  const characterContract = new ethers.Contract(
+    characterAddress,
+    characterAbi,
+    signer
+  );
 
   useEffect(() => {
     const fetchMintPrice = async () => {
@@ -94,7 +99,9 @@ export default function Weapon() {
                 onSale,
                 characterID,
               } = await weaponContract.metadataOf(_value.toString());
-
+              
+              console.log(characterID.toString());
+              
               const isWeaponAlreadyAdded = weapons.some(
                 (weapon) => weapon.id === _value.toString()
               );
@@ -149,6 +156,37 @@ export default function Weapon() {
       console.error('Error minting:', error);
     }
   };
+
+  const equipWeapon = async (id) => {
+    const address = await signer.getAddress();
+    const balance = await characterContract.balanceOf(address);
+    if (parseInt(balance.toString()) > 0) {
+      try{
+        const filter = characterContract.filters.Transfer(null, address);
+
+        const fromBlock = 0;
+        const toBlock = 'latest';
+
+        const logs = await characterContract.queryFilter(
+          filter,
+          fromBlock,
+          toBlock
+        );
+
+        const lastLog = logs[logs.length - 1];
+        const { _value } = lastLog.args;
+        console.log(id, _value.toString())
+        
+        await weaponContract.addWeaponToCharacter(id, _value.toString());
+        console.log('succesful equip!')
+      } catch (error) {
+        console.error('Error fetching characters:', error);
+      }
+    } else {
+      console.log("user has no character")
+    }
+
+  }
 
   return (
     <div class="flex flex-col w-full h-full justify-center pb-20">
@@ -303,8 +341,8 @@ export default function Weapon() {
                       <h3 class="text-gray-700 dark:text-gray-300">
                         On Sale: {weapon.onSale}{' '}
                       </h3>
-                      <button disabled={weapon.characterID != 0} class="inline-flex items-center justify-center rounded-md text-sm font-medium disabled:pointer-events-none disabled:opacity-50 bg-indigo-500 text-white text-secondary-foreground h-10 px-3 py-2 w-1/4">
-                        {weapon.characterID != 0 ? 'Equiped' : 'Equip'}
+                      <button disabled={weapon.characterId != 0} onClick={() => equipWeapon(weapon.id)} class="inline-flex items-center justify-center rounded-md text-sm font-medium disabled:pointer-events-none disabled:opacity-50 bg-indigo-500 text-white text-secondary-foreground h-10 px-3 py-2 w-1/4">
+                        {weapon.characterId != 0 ? 'Equiped' : 'Equip'}
                     </button>
                     </div>
                   </div>

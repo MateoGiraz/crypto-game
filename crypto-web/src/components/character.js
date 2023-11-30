@@ -57,7 +57,7 @@ export default function Character() {
             await characterContract.metadataOf(_value.toString());
 
           setArmorPoints(armorPoints.toString());
-          setWeapon(weapon.map(elem => elem.toString()));
+          setWeapon(weapon.map(elem => elem.toString() != "0" ? elem.toString() + " - " : ''));
           setsellPrice(sellPrice.toString());
           setName(name.toString());
           setAttackPoints(attackPoints.toString());
@@ -287,7 +287,7 @@ export default function Character() {
                   </div>
                 </div>
                 <div class="border-t border-gray-200 dark:border-gray-600 p-3">
-                  <h3 class="text-gray-700 dark:text-gray-300">Weapons: none </h3>
+                  <h3 class="text-gray-700 dark:text-gray-300">WeaponIds: - {weapon ?? "none"} </h3>
                   <div class="flex flex-wrap gap-2"></div>
                 </div>
               </div>
