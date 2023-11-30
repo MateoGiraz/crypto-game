@@ -40,6 +40,17 @@ Los propietarios de personajes pueden ponerlos en venta y establecer precios de 
 Este contrato gestiona la creación, transferencia de las armas.
 Las armas pueden ser poseídas por personajes y equipadas desde este contrato.
 
+### Address de los contratos
+
+OwnersContract: ```0x4EE71De305f162448C1E7F1DA0CC2060aD301bAe```
+<br/>
+Experience: ```0x127d2c578d482B4568D619163e87a30AEdE9d1dD```
+<br/>
+Rubie: ```0xD74eF0D24b65750528B92d49fA9d9E916D3d642B```
+<br/>
+Character: ```0x0ae412486660729647553C2De78F662c2e2D3128```
+<br/>
+Weapon: ```0x13295abbCD72c872a200c1a55E519d5b1fcc8d50```
 
 ### Errores conocidos
 
