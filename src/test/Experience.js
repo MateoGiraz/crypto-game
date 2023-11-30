@@ -58,7 +58,7 @@ describe('Experience', function () {
     expect(await experience.symbol()).to.equal('EXP');
     expect((await experience.decimals()).toNumber()).to.equal(18);
     expect((await experience.totalSupply()).toNumber()).to.equal(0);
-    expect((await experience.price()).toString()).to.equal(maxInteger.toString());
+    expect((await experience.price()).toString()).to.equal(1+"");
   });
 
   it('should allow setting token price', async function () {

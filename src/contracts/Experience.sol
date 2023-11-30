@@ -27,7 +27,7 @@ contract Experience is IExperience {
         Name = _name;
         Symbol = _symbol;
         OwnersContract = _ownersContract;
-        Price = MAX_INTEGER;
+        Price = 1;
     }
     function name() external view override returns (string memory _name) {
         _name = Name;
@@ -109,7 +109,7 @@ contract Experience is IExperience {
 
         uint totalPrice = Price * _amount;
         require(rubieContract.balanceOf(msg.sender) >= totalPrice, "Insufficient balance");
-
+        /// @dev Throw if the contract don't have enough allowance to cover the price of the tokens to buy. Message: "Insufficient allowance"
         address characterAddress = IOwnersContract(OwnersContract).addressOf("Character");
         ICharacter characterContract = ICharacter(characterAddress);
         uint256 _characterId = characterContract.ownedBy(msg.sender);
@@ -117,13 +117,6 @@ contract Experience is IExperience {
         uint256 sellPrice = totalPrice /10;
         uint256 armorPoints = _amount /10;
         uint256 attackPoints = _amount /20;
-
-        /// @dev Increase the sell price of the user charater for the 10% of the price.
-
-
-        /// @dev Increase the armor points of the user charater in 10% of the experience buyed.
-
-        /// @dev Increase the attack points of the user charater in 5% of the experience buyed.
 
         characterContract.upgradeStats(_characterId, attackPoints, armorPoints, sellPrice);
         rubieContract.safeTransferFrom(msg.sender, address(this), totalPrice);
@@ -242,6 +235,5 @@ function calculateCommission(uint256 amount) private view returns (uint256) {
     balances[_to] += _amount;
     _totalSupply += _amount;
     emit Transfer(address(0), _to, _amount);
-}
-
+    }
 }

@@ -44,7 +44,7 @@ contract OwnersContract is IOwnersContract {
 
     function addressOf(
         string memory _contractName
-    ) external view override returns (address _contractAddress) {
+    ) external view override  returns (address _contractAddress) {
         _contractAddress = addresses[_contractName];
     }
 
@@ -54,7 +54,7 @@ contract OwnersContract is IOwnersContract {
         _ownerBalance = _ownerAddress.balance;
     }
 
-    function addOwner(address _newOwner) external override onlyOwner(msg.sender) {
+    function addOwner(address _newOwner) external override onlyOwner(msg.sender)  {
         require(!areOwners[_newOwner], "The address is already an owner");
         require(_newOwner != address(0x0), "The address is not valid");
         areOwners[_newOwner] = true;
