@@ -11,9 +11,9 @@ async function deployContracts() {
     'EXP',
     ownersContractAddress,
   ])
-  //await deployContract('Character', [])
+  await deployContract('Character', ['Character', 'CHR', ownersContractAddress])
   await deployContract('Rubie', ['Rubie', 'RUB', ownersContractAddress])
-  await deployContract('Weapon', [])
+  await deployContract('Weapon', ['Weapon', 'WPN', ownersContractAddress,])//ARREGLAR
 }
 
 async function deployContract(contractName, constructorArguments) {
