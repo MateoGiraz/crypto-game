@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { rubieAbi } from '../abi/RubieAbi';
 import { useState, useEffect } from 'react';
+import { rubieAddress } from '../addresses';
 
 export default function Rubie(){
   const [price, setPrice] = useState('');
@@ -11,7 +12,7 @@ export default function Rubie(){
 
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner();
-  const rubieContract = new ethers.Contract("0x9151732d17Fbaa1b1138040946EbbfA1d21c67D2", rubieAbi, signer)
+  const rubieContract = new ethers.Contract(rubieAddress, rubieAbi, signer)
 
   useEffect(() => {
     const fetchPrice = async () => {

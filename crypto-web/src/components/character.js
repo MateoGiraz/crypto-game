@@ -1,82 +1,82 @@
 import { ethers } from 'ethers';
-import { rubieAbi } from '../abi/RubieAbi';
 import { useState, useEffect } from 'react';
+import { characterAbi } from '../abi/characterAbi';
+import { characterAddress } from '../addresses';
 
-export default function Rubie(){
-  const [price, setPrice] = useState('');
+export default function Character(){
+  const [mintPrice, setMintPrice] = useState('');
   const [supply, setSupply] = useState('');
-  const [decimals, setDecimals] = useState('');
+  const [URI, setURI] = useState('');
   const [symbol, setSymbol] = useState('');
-  const [numberOfTokens, setNumberOfTokens] = useState('');
+  const [mintingName, setMintingName] = useState('');
 
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner();
-  const rubieContract = new ethers.Contract("0x9151732d17Fbaa1b1138040946EbbfA1d21c67D2", rubieAbi, signer)
+  const characterContract = new ethers.Contract(characterAddress, characterAbi, signer)
 
   useEffect(() => {
-    const fetchPrice = async () => {
+    const fetchMintPrice = async () => {
       try {
-        const price = await rubieContract.price();
-        setPrice(price.toString());
+        const mintPrice = await characterContract.mintPrice();
+        setMintPrice(mintPrice.toString());
       } catch (error) {
-        console.error('Error fetching price:', error);
+        console.error('Error fetching mintPrice:', error);
       }
     };
 
     const fetcTotalSupply = async () => {
       try {
-        const totalSupply = await rubieContract.totalSupply();
+        const totalSupply = await characterContract.totalSupply();
         setSupply(totalSupply.toString());
       } catch (error) {
-        console.error('Error fetching price:', error);
+        console.error('Error fetching name:', error);
       }
     };
 
-    const fetchDecimals = async () => {
+    const fetchURI = async () => {
       try {
-        const decimals = await rubieContract.decimals();
-        setDecimals(decimals.toString());
+        const URI = await characterContract.tokenURI();
+        setURI(URI.toString());
       } catch (error) {
-        console.error('Error fetching price:', error);
+        console.error('Error fetching name:', error);
       }
     };
 
     const fetchSymbol = async () => {
       try {
-        const symbol = await rubieContract.symbol();
+        const symbol = await characterContract.symbol();
         setSymbol(symbol.toString());  
       } catch (error) {
-        console.error('Error fetching price:', error);
+        console.error('Error fetching name:', error);
       }
     };
 
-    fetchPrice();
+    fetchMintPrice();
     fetcTotalSupply();
-    fetchDecimals();
+    fetchURI();
     fetchSymbol();
   }, []);
 
   const mintCharacter = async () => {
     try {
-      if(numberOfTokens === 0) 
+      if(mintingName === "") 
         return;
 
-      console.log('Buying ' + numberOfTokens + ' tokens...');  
-      
+      console.log('Minting ' + mintingName + '...');  
+
       const options = {
         gasLimit: 3000000,
-        value: ethers.utils.parseUnits((price * numberOfTokens)+"", "wei"),
       };
 
-      await rubieContract.buy(
-        numberOfTokens,
+      await characterContract.safeMint(
+        mintingName,
         options
       );
 
-      setNumberOfTokens(0);
-      console.log('Tokens purchased successfully!');
+      setMintingName("");
+      console.log('Minted successfully!');
     } catch (error) {
-      console.error('Error buying tokens:', error);
+      console.error('Error minting:', error);
     }
   };
 
@@ -86,7 +86,7 @@ export default function Rubie(){
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 500">
         <div class="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
           <div class="p-6 flex flex-row items-center justify-between pb-2 space-y-0">
-            <h3 class="tracking-tight text-sm font-medium">Collection Name</h3>
+            <h3 class="tracking-tight text-sm font-medium">Minting Price</h3>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -104,7 +104,7 @@ export default function Rubie(){
             </svg>
           </div>
           <div class="p-6">
-          <div className="text-2xl font-bold overflow-hidden whitespace-nowrap text-gray-800 dark:text-gray-300">{price} x 10⁻¹⁸</div>
+          <div className="text-2xl font-bold overflow-hidden whitespace-nowrap text-gray-800 dark:text-gray-300">{mintPrice}</div>
           </div>
         </div>
         <div class="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
@@ -179,7 +179,7 @@ export default function Rubie(){
             </svg>
           </div>
           <div class="p-6">
-            <div class="text-2xl font-bold">{decimals}</div>
+            <div class="text-2xl font-bold">{URI}</div>
           </div>
         </div>
       </div>
@@ -189,9 +189,9 @@ export default function Rubie(){
             <input
               class="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-full"
               placeholder="Character's name..."
-              type="number"
-              value={numberOfTokens}
-              onChange={(e) => setNumberOfTokens(e.target.value)}
+              type="text"
+              value={mintingName}
+              onChange={(e) => setMintingName(e.target.value)}
             />
           </div>
           <div class="w-full md:w-1/2 p-2">

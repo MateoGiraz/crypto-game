@@ -1,14 +1,20 @@
 import { ethers } from 'ethers';
 import { rubieAbi } from '../abi/RubieAbi';
 import { useState, useEffect } from 'react';
+import { characterAbi } from '../abi/characterAbi';
+import { weaponAbi } from '../abi/weaponAbi';
+import { characterAddress, rubieAddress, weaponAddress } from '../addresses';
 
 export default function Header() {
   const [balance, setBalance] = useState(0);
-  
+  const [characters, setCharacters] = useState(0);
+  const [weapons, setWeapons] = useState(0);
+
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner();
-  const rubieContract = new ethers.Contract("0x9151732d17Fbaa1b1138040946EbbfA1d21c67D2", rubieAbi, signer)
-
+  const rubieContract = new ethers.Contract(rubieAddress, rubieAbi, signer)
+  const characterContract = new ethers.Contract(characterAddress, characterAbi, signer)
+  const weaponContract = new ethers.Contract(weaponAddress, weaponAbi, signer)
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -20,10 +26,30 @@ export default function Header() {
         console.error('Error fetching price:', error);
       }
     };
+
+    const fetchCharacters = async () => {
+      try {
+        const address = await signer.getAddress();
+        const balance = await characterContract.balanceOf(address);
+        setCharacters(balance.toString())
+      } catch (error) {
+        console.error('Error fetching characters:', error);
+      }
+    };
+
+    const fetchWeapons = async () => {
+      try {
+        const address = await signer.getAddress();
+        const weapons = await weaponContract.balanceOf(address);
+        setWeapons(weapons.toString())
+      } catch (error) {
+        console.error('Error fetching weapons:', error);
+      }
+    };
   
-    console.log(provider)
-    console.log(signer)
     fetchBalance()
+    fetchCharacters()
+    fetchWeapons()
   },[])
 
   return (
@@ -46,14 +72,14 @@ export default function Header() {
         <IconSword className="h-6 w-6" />
         <div>
           <h2 className="text-lg font-semibold">Total Weapons</h2>
-          <p className="text-sm">9 Weapons</p>
+          <p className="text-sm">{weapons} Weapons</p>
         </div>
       </div>
       <div className="flex items-center space-x-4">
         <IconUser className="h-6 w-6" />
         <div>
           <h2 className="text-lg font-semibold">Total Characters</h2>
-          <p className="text-sm">10 Characters</p>
+          <p className="text-sm">{characters} Characters</p>
         </div>
       </div>
     </div>
