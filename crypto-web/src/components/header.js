@@ -7,13 +7,15 @@ export default function Header() {
   
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner();
-  const rubieContract = new ethers.Contract("0x4217009c9083420F989Eb026aBa7f4DACd4c1168", rubieAbi, signer)
+  const rubieContract = new ethers.Contract("0x9151732d17Fbaa1b1138040946EbbfA1d21c67D2", rubieAbi, signer)
 
 
   useEffect(() => {
     const fetchBalance = async () => {
       try {
-        const price = await rubieContract.balanceOf();
+        const address = await signer.getAddress();
+        const balance = await rubieContract.balanceOf(address);
+        setBalance(balance.toString())
       } catch (error) {
         console.error('Error fetching price:', error);
       }
@@ -30,7 +32,7 @@ export default function Header() {
         <IconWallet className="h-6 w-6" />
         <div>
           <h2 className="text-lg font-semibold">Token Balance</h2>
-          <p className="text-sm">1234 Token</p>
+          <p className="text-sm">{balance} Token</p>
         </div>
       </div>
       <div className="flex items-center space-x-4">

@@ -1,15 +1,14 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 import Home from './components/home';
+import { ethers } from 'ethers';
 
 function App() {
   const [wallet, setWallet] = useState(null);
-
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
 
   const handleConnect = async () => {
-    let account = await window.ethereum.request({
-      method: 'eth_requestAccounts',
-    });
+    let account = await provider.send("eth_requestAccounts", []);
     setWallet(account);
   };
   return (

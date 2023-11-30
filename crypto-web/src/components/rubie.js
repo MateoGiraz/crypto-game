@@ -7,11 +7,11 @@ export default function Rubie(){
   const [supply, setSupply] = useState('');
   const [decimals, setDecimals] = useState('');
   const [symbol, setSymbol] = useState('');
+  const [numberOfTokens, setNumberOfTokens] = useState('');
 
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner();
-  const rubieContract = new ethers.Contract("0x4217009c9083420F989Eb026aBa7f4DACd4c1168", rubieAbi, signer)
-
+  const rubieContract = new ethers.Contract("0x9151732d17Fbaa1b1138040946EbbfA1d21c67D2", rubieAbi, signer)
 
   useEffect(() => {
     const fetchPrice = async () => {
@@ -45,7 +45,6 @@ export default function Rubie(){
       try {
         const symbol = await rubieContract.symbol();
         setSymbol(symbol.toString());  
-        console.log(symbol)
       } catch (error) {
         console.error('Error fetching price:', error);
       }
@@ -56,6 +55,30 @@ export default function Rubie(){
     fetchDecimals();
     fetchSymbol();
   }, []);
+
+  const buyTokens = async () => {
+    try {
+      if(numberOfTokens === 0) 
+        return;
+
+      console.log('Buying ' + numberOfTokens + ' tokens...');  
+      
+      const options = {
+        gasLimit: 3000000,
+        value: ethers.utils.parseUnits((price * numberOfTokens)+"", "wei"),
+      };
+
+      await rubieContract.buy(
+        numberOfTokens,
+        options
+      );
+
+      setNumberOfTokens(0);
+      console.log('Tokens purchased successfully!');
+    } catch (error) {
+      console.error('Error buying tokens:', error);
+    }
+  };
 
   return(
     <div class="flex flex-col w-full h-full justify-center pb-20">
@@ -81,7 +104,7 @@ export default function Rubie(){
             </svg>
           </div>
           <div class="p-6">
-          <div className="text-2xl font-bold overflow-hidden whitespace-nowrap text-gray-800 dark:text-gray-300">{price}</div>
+          <div className="text-2xl font-bold overflow-hidden whitespace-nowrap text-gray-800 dark:text-gray-300">{price} x 10⁻¹⁸</div>
           </div>
         </div>
         <div class="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
@@ -166,12 +189,15 @@ export default function Rubie(){
               class="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-full"
               placeholder="Number of tokens..."
               type="number"
+              value={numberOfTokens}
+              onChange={(e) => setNumberOfTokens(e.target.value)}
             />
           </div>
           <div class="w-full md:w-1/2 p-2">
             <button
+              onClick={buyTokens}
               class=" inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-indigo-500 text-primary-foreground hover:bg- h-10 px-4 py-2 w-full text-white"
-              type="submit"
+              type="button"
             >
               Purchase Tokens
             </button>
