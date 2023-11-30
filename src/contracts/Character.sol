@@ -331,6 +331,15 @@ contract Character is ICharacter {
         _currentTokenID = _totalSupply;
     }
 
+    function weaponCount (uint256 _tokenId) external view returns (uint256 _weaponCount) {
+        _weaponCount = 0;
+        for (uint256 i = 0; i < 3; i++) {
+            if (metadatas[_tokenId].weapon[i] != 0) {
+                _weaponCount++;
+            }
+        }
+    }
+
     function mintPrice() external view override returns (uint256 _mintPrice) {
         _mintPrice = MintPrice;
     }

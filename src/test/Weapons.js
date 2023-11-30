@@ -45,9 +45,9 @@ describe('Weapon', function () {
     });
 
     it('should have correct initial values', async function () {
-        expect(await weapon.name()).to.equal('Weapon'); // Replace 'WeaponCollection' with the expected name
-        expect(await weapon.symbol()).to.equal('WPN'); // Replace 'WPN' with the expected symbol
-        expect(await weapon.tokenURI()).to.equal('tokenURI'); // Replace 'tokenURI' with the expected tokenURI
+        expect(await weapon.name()).to.equal('Weapon'); 
+        expect(await weapon.symbol()).to.equal('WPN'); 
+        expect(await weapon.tokenURI()).to.equal('tokenURI');  
         expect((await weapon.totalSupply()).toNumber()).to.equal(0);
     });
 
@@ -55,36 +55,57 @@ describe('Weapon', function () {
         
         expect((await weapon.balanceOf(owner.address)).toNumber()).to.equal(0);
         
-        
-        // Mint a new weapon to the owner
-        const weaponName = 'Sword of Power'; // Replace with the desired weapon name
+        const weaponName = 'Sword of Power'; 
         await weapon.safeMint(weaponName);
-    
-        // Verify that the balance of the owner is now 1
+     
         expect((await weapon.balanceOf(owner.address)).toNumber()).to.equal(1);
         
-        // Mint another weapon to the owner
-        const secondWeaponName = 'Axe of Destruction'; // Replace with another desired weapon name
+        const secondWeaponName = 'Axe of Destruction'; 
         await weapon.safeMint(secondWeaponName);
     
-        // Verify that the balance of the owner is now 2
         expect((await weapon.balanceOf(owner.address)).toNumber()).to.equal(2);
       });
     
       it('should return 0 for the balance of an address with no tokens', async function () {
-        // Verify that the balance of a recipient with no tokens is 0
+        
         expect((await weapon.balanceOf(recipient.address)).toNumber()).to.equal(0);
       });
 
       it('should return the correct balance for the owner after a transfer', async function () {
-        // Mint a new weapon to the owner
-        const weaponName = 'Sword of Power'; // Replace with the desired weapon name
+        
+        const weaponName = 'Sword of Power'; 
         await weapon.safeMint(weaponName);
         const weaponId = weapon.totalSupply();
         await weapon.safeTransferFrom(owner.address, recipient.address, weaponId);
-        // Verify that the balance of the owner is now 1
+         
         const ownerBalance = await weapon.balanceOf(owner.address);
         expect((await weapon.balanceOf(recipient.address)).toNumber()).to.equal(1);
         
       });
+
+      it('should add a weapon to a character and update stats', async function () {
+
+        await character.mintHero('Hero');
+        characterId = await character.tokenId();
+        
+        const initialWeaponCount = await character.weaponCount(characterId);
+        expect(initialWeaponCount.toNumber()).to.equal(0);
+
+        await weapon.addWeaponToCharacter(weaponId, characterId);
+
+        const updatedWeaponCount = await character.weaponCount(characterId);
+        expect(updatedWeaponCount).to.equal(1);
+
+
+        const characterStats = await character.metadataOf(characterId);
+        const weaponStats = await weapon.metadataOf(weaponId);
+
+        expect(characterStats.attackPoints).to.equal(weaponStats.attackPoints);
+        expect(characterStats.armorPoints).to.equal(weaponStats.armorPoints);
+        expect(characterStats.sellPrice).to.equal(weaponStats.sellPrice);
+        expect(characterStats.requiredExperience).to.equal(weaponStats.requiredExperience);
+
+        const isEquipped = await characterContract.isEquiped(characterId, weaponId);
+        expect(isEquipped).to.be.true;
+    });
 });
