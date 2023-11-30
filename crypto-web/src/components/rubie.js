@@ -98,14 +98,14 @@ export default function Rubie(){
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="w-4 h-4 text-gray-500 dark:text-gray-400"
+              class="w-4 h-4 text-gray-500 "
             >
               <line x1="12" x2="12" y1="2" y2="22"></line>
               <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
             </svg>
           </div>
           <div class="p-6">
-          <div className="text-2xl font-bold overflow-hidden whitespace-nowrap text-gray-800 dark:text-gray-300">{price} x 10⁻¹⁸</div>
+          <div className="text-2xl font-bold overflow-hidden whitespace-nowrap text-gray-800">{price} x 10⁻¹⁸</div>
           </div>
         </div>
         <div class="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
@@ -121,7 +121,7 @@ export default function Rubie(){
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="w-4 h-4 text-gray-500 dark:text-gray-400"
+              class="w-4 h-4 text-gray-500"
             >
               <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
               <path d="m3.3 7 8.7 5 8.7-5"></path>
@@ -145,7 +145,7 @@ export default function Rubie(){
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="w-4 h-4 text-gray-500 dark:text-gray-400"
+              class="w-4 h-4 text-gray-500"
             >
               <line x1="4" x2="20" y1="9" y2="9"></line>
               <line x1="4" x2="20" y1="15" y2="15"></line>
@@ -170,7 +170,7 @@ export default function Rubie(){
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="w-4 h-4 text-gray-500 dark:text-gray-400"
+              class="w-4 h-4 text-gray-500"
             >
               <line x1="4" x2="20" y1="9" y2="9"></line>
               <line x1="4" x2="20" y1="15" y2="15"></line>
