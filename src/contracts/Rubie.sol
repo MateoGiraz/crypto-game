@@ -132,7 +132,7 @@ contract Rubie is IRubie {
     }
 
     function buy(uint256 _amount) external payable override {
-        uint256 totalPrice = Price * _amount;
+        uint256 totalPrice = (Price / 1000000000000000000) * _amount;
         require(msg.value >= totalPrice, "Insufficient ether");
         if (msg.value > totalPrice) {
             payable(msg.sender).transfer(msg.value - totalPrice);

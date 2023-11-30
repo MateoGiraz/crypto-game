@@ -43,6 +43,7 @@ async function interactWithOwnersContract(ownersContractAddress, contractName, c
   const ownersContract = await ethers.getContractAt('OwnersContract', ownersContractAddress);
   await ownersContract.addContract(contractName, contractAddress);
 }
+  
 
 async function deployContract(contractName, constructorArguments) {
   const Contract = await ethers.getContractFactory(contractName);
