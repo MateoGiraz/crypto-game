@@ -6,6 +6,7 @@ import "../interfaces/ICharacter.sol";
 import "../interfaces/IOwnersContract.sol";
 import "../interfaces/IRubie.sol";
 import "../interfaces/IERC721TokenReceiver.sol";
+import "../interfaces/IWeapon.sol";
 
 contract Character is ICharacter {
     string Name;
@@ -74,35 +75,28 @@ contract Character is ICharacter {
         return owned[owner];
     }
 
-    
-
-
 
     function equip(uint256 _tokenId, uint256 _weaponId) external override {
-        address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
-        require(msg.sender == weaponAddress, "Not called by weapons contract");
-
-        for(uint256 i = 0; i < 3; i++) {
+        bool isEquip = false;
+        for(uint256 i = 0; i < 3 && !isEquip; i++) {
             if(metadatas[_tokenId].weapon[i] == uint256(0)) {
                 metadatas[_tokenId].weapon[i] = _weaponId;
+                isEquip = true;
             }
         }
     }
 
     function unEquip(uint256 _tokenId, uint256 _weaponId) external override {
-        address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
-        require(msg.sender == weaponAddress, "Not called by weapons contract");
-
-        for(uint256 i = 0; i < 3; i++) {
+        bool isEquip = true;
+        for(uint256 i = 0; i < 3 && isEquip; i++) {
             if(metadatas[_tokenId].weapon[i] == _weaponId) {
                 metadatas[_tokenId].weapon[i] = uint256(0);
+                isEquip = false;
             }
         }
     }
 
     function isEquiped(uint256 _tokenId, uint256 _weaponId) external view override returns (bool) {
-        address weaponAddress = IOwnersContract(OwnersContract).addressOf("Weapon");
-        require(msg.sender == weaponAddress, "Not called by weapons contract");
 
         for(uint256 i = 0; i < 3; i++) {
             if(metadatas[_tokenId].weapon[i] == _weaponId) {
@@ -125,8 +119,7 @@ contract Character is ICharacter {
     }
 
         function upgradeStats(uint256 _characterId, uint256 attackPoints, uint256 armorPoints, uint256 sellPrice) external override {
-        address experienceAddress = IOwnersContract(OwnersContract).addressOf("Experience");
-        require(msg.sender == experienceAddress, "Not called by experience contract");
+
 
         metadatas[_characterId].attackPoints += attackPoints;
         metadatas[_characterId].armorPoints += armorPoints;
