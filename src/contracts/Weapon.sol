@@ -135,7 +135,7 @@ contract Weapon is IWeapon {
         _totalSupply++;
         _owners[_totalSupply] = msg.sender;
         _metadatas[_totalSupply] = Metadata(
-            _totalSupply,
+            0,
             30,
             5,
             _mintPrice,
@@ -166,7 +166,7 @@ contract Weapon is IWeapon {
         _totalSupply++;
         _owners[_totalSupply] = msg.sender;
         _metadatas[_totalSupply] = Metadata(
-            _totalSupply,
+            0,
             _attackPoints,
             _armorPoints,
             _sellPrice,
