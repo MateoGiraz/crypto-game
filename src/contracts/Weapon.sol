@@ -197,7 +197,7 @@ contract Weapon is IWeapon {
 
         require(_metadatas[_tokenId].onSale, "Weapon not on sale");
         require(_metadatas[_tokenId].requiredExperience <= 0, "Insufficient experience");
-        require(_balances[msg.sender] >= _metadatas[_tokenId].sellPrice, "Insufficient balance");
+        require(rubieContract.balanceOf(msg.sender) >= _metadatas[_tokenId].sellPrice, "Insufficient balance");
         //require(_totalSupply >= _metadatas[_tokenId].sellPrice, "Insufficient allowance");//TODO: fix
 
         ICharacter charactersContract = ICharacter(ownersContract.addressOf("Character"));
@@ -206,8 +206,8 @@ contract Weapon is IWeapon {
 
         rubieContract.safeTransferFrom(msg.sender, _owners[_tokenId], _metadatas[_tokenId].sellPrice);
 
-        _balances[msg.sender] --;
-        _balances[_owners[_tokenId]] ++;
+        _balances[msg.sender]--;
+        _balances[_owners[_tokenId]]++;
         _owners[_tokenId] = msg.sender;
         _metadatas[_tokenId].onSale = false;
         _metadatas[_tokenId].name = _newName;
