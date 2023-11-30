@@ -88,6 +88,7 @@ describe('Weapon', function () {
         await weapon.safeMint(weaponName);
         const weaponId = weapon.totalSupply();
 
+
         await expect(
             weapon.connect(recipient).safeTransferFrom(owner.address, recipient.address, weaponId)
         ).to.be.revertedWith("Not authorized");
@@ -136,6 +137,7 @@ describe('Weapon', function () {
         await weapon.safeMint(weaponName);
         const tokenId = weapon.totalSupply();
 
+
         await expect(
             weapon.connect(recipient).setOnSale(tokenId, true)
         ).to.be.revertedWith("Not the owner");
@@ -180,5 +182,6 @@ describe('Weapon', function () {
         expect(metadata.name).to.equal('New Sword');
         expect(finalBalanceOwner.sub(initialBalanceOwner)).to.equal(sellPrice);
         expect(finalBalanceRecipient.sub(initialBalanceRecipient)).to.equal(0);
+
     });*/
 });
