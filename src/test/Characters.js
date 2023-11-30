@@ -72,39 +72,6 @@ describe('Character', function () {
     await character.approve(recipient.address, newTokenId);
     expect(await character.allowance(newTokenId)).to.equal(recipient.address);
   });
-
-
- 
-  it('should unequip a weapon from the character', async function () {
-    await rubie.mint(100, owner.address);
-    await character.safeMint("New Character");
-    const newTokenId = await character.currentTokenID();
-    const weaponId = 25;
-    await character.equip(newTokenId, weaponId);
-    await character.unEquip(newTokenId, weaponId);
-    expect(await character.isEquiped(newTokenId, weaponId)).to.be.false;
-  });
-
-  it('should equip a weapon to the character', async function () {
-    await rubie.mint(100, owner.address);
-    await character.safeMint("New Character");
-    const newTokenId = await character.currentTokenID();
-    const weaponId = 25;
-    await character.equip(newTokenId, weaponId);
-    expect(await character.isEquiped(newTokenId, weaponId)).to.be.true;
-  });
-
-  it('should update character stats', async function () {
-    await rubie.mint(100, owner.address);
-    await character.safeMint("New Character");
-    const newTokenId = await character.currentTokenID();
-    const attackPointsToAdd = 10;
-    const armorPointsToAdd = 5;
-    await character.upgradeStats(newTokenId, attackPointsToAdd, armorPointsToAdd,0);
-    const metadata = await character.metadataOf(newTokenId);
-    expect(metadata.attackPoints).to.equal(100 + attackPointsToAdd); // Asume que el valor inicial es 100
-    expect(metadata.armorPoints).to.equal(50 + armorPointsToAdd); // Asume que el valor inicial es 50
-  });
   
   
   

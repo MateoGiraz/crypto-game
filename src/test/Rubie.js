@@ -77,4 +77,47 @@ describe('Rubie', function () {
     expect(finalRecipientBalance - initialRecipientBalance).to.equal(50);
   });
 
+  it('should revert with invalid address for safeTransfer', async () => {
+    await rubie.connect(owner).mint(1000, owner.address);
+    const ownerBalance = await rubie.balanceOf(owner.address);
+    expect(ownerBalance).to.be.at.least(10);
+  
+    await expect(rubie.connect(owner).safeTransfer("0x0000000000000000000000000000000000000000", 10))
+      .to.be.revertedWith("Invalid address");
+  });
+  
+  
+
+  it('should revert with invalid address for approve', async () => {
+    await expect(rubie.approve("0x0000000000000000000000000000000000000000", 10))
+      .to.be.revertedWith("Invalid _spender");
+  });
+
+  it('should revert if non-owner tries to set price', async function () {
+    await expect(rubie.connect(recipient).setPrice(10))
+      .to.be.revertedWith("Not the owner");
+  });
+
+  it('should allow owner to set price', async function () {
+    await expect(rubie.connect(owner).setPrice(10))
+      .to.not.be.reverted;
+    expect(await rubie.price()).to.equal(10);
+  });
+
+  it('should revert if trying to set non-zero allowance on top of non-zero allowance', async function () {
+    await rubie.connect(owner).mint(100, owner.address);
+    await rubie.approve(recipient.address, 10);
+    await expect(rubie.approve(recipient.address, 20))
+      .to.be.revertedWith("Invalid allowance amount. Set to zero first");
+  });
+
+  it('should emit a Transfer event on mint', async function () {
+    await expect(rubie.connect(owner).mint(100, recipient.address))
+      .to.emit(rubie, 'Transfer').withArgs(ethers.constants.AddressZero, recipient.address, 100);
+  });
+  
+  
+  
+  
+
 });
