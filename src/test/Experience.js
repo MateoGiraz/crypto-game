@@ -124,4 +124,42 @@ it('should revert with invalid address for approve', async () => {
   await expect(experience.approve("0x0000000000000000000000000000000000000000", 10)).to.be.revertedWith("Invalid _spender");
 });
 
+it('should revert if non-owner tries to set price', async function () {
+  await expect(experience.connect(recipient).setPrice(10))
+    .to.be.revertedWith("Not the owner");
+});
+
+it('should allow owner to set price', async function () {
+  await expect(experience.connect(owner).setPrice(10))
+    .to.not.be.reverted;
+  expect(await experience.price()).to.equal(10);
+});
+
+it('should revert if trying to set non-zero allowance on top of non-zero allowance', async function () {
+  await experience.connect(owner).mintForTesting(owner.address, 10000);
+  await experience.approve(recipient.address, 10);
+  await expect(experience.approve(recipient.address, 20))
+    .to.be.revertedWith("Invalid allowance amount. Set to zero first");
+});
+
+it('should allow setting allowance to zero and then to another value', async function () {
+  await experience.connect(owner).mintForTesting(owner.address, 10000);
+  await experience.approve(recipient.address, 10);
+  await experience.approve(recipient.address, 0);
+  await expect(experience.approve(recipient.address, 20))
+    .to.not.be.reverted;
+});
+
+it('should revert if sender does not have enough balance for transfer', async function () {
+  // Asegúrate de que el owner no tenga suficientes tokens
+  await expect(experience.safeTransfer(recipient.address, 100000000))
+    .to.be.revertedWith("Insufficient balance");
+});
+
+it('should revert if sender does not have enough balance for approval', async function () {
+  // Asegúrate de que el owner no tenga suficientes tokens
+  await expect(experience.approve(recipient.address, 1000000000))
+    .to.be.revertedWith("Insufficient balance");
+});
+
 });
