@@ -103,7 +103,7 @@ contract Experience is IExperience {
         _price = Price;
     }
 
-    function buy(uint256 _amount) external override {
+    /*function buy(uint256 _amount) external override {
         address rubieAddress = IOwnersContract(OwnersContract).addressOf("Rubie");
         IRubie rubieContract = IRubie(rubieAddress);
 
@@ -130,7 +130,44 @@ contract Experience is IExperience {
         balances[msg.sender] += _amount;
 
         emit Transfer(msg.sender, address(this), _amount);
-    }
+    }*/
+
+    function buy(uint256 _amount) external override {
+    address rubieAddress = IOwnersContract(OwnersContract).addressOf("Rubie");
+    IRubie rubieContract = IRubie(rubieAddress);
+
+    uint256 totalPrice = Price * _amount;
+    require(rubieContract.balanceOf(msg.sender) >= totalPrice, "Insufficient balance");
+
+    // Calcular la comisión
+    uint256 commission = calculateCommission(totalPrice); // Esta función calculará la comisión
+    uint256 amountAfterCommission = totalPrice - commission;
+
+    address characterAddress = IOwnersContract(OwnersContract).addressOf("Character");
+    ICharacter characterContract = ICharacter(characterAddress);
+    uint256 _characterId = characterContract.ownedBy(msg.sender);
+
+    uint256 sellPrice = amountAfterCommission / 10;
+    uint256 armorPoints = _amount / 10;
+    uint256 attackPoints = _amount / 20;
+
+    characterContract.upgradeStats(_characterId, attackPoints, armorPoints, sellPrice);
+    rubieContract.safeTransferFrom(msg.sender, address(this), amountAfterCommission);
+
+    // Aumentar el balance de Experience por la comisión
+    balances[address(this)] += commission;
+
+    balances[msg.sender] += _amount;
+
+    emit Transfer(msg.sender, address(this), _amount);
+}
+
+// Función para calcular la comisión
+function calculateCommission(uint256 amount) private view returns (uint256) {
+    uint256 commissionPercentage = IOwnersContract(OwnersContract).tokenSellFeePercentage();
+    return (amount * commissionPercentage) / 100;
+}
+
 
     function setPrice(uint256 _price) external onlyOwners override {
         require(_price > 0, "Invalid _price");

@@ -356,11 +356,16 @@ contract Character is ICharacter {
         MintPrice = _mintPrice;
     }
 
-    function collectFee() external override {
-        require(address(this).balance > 0, "zero balance");
-        require(msg.sender ==  OwnersContract, "Not owners contract");
-        payable(OwnersContract).transfer(address(this).balance);
-    }
+function collectFee() external override {
+    require(msg.sender == OwnersContract, "Not owners contract");
+
+    uint256 commissionBalance = address(this).balance;
+    require(commissionBalance > 0, "zero balance");
+
+   
+    IOwnersContract(OwnersContract).collectFeeFromContract("Character"); 
+}
+
 
     /// private functions
 
