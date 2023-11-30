@@ -28,7 +28,7 @@ contract Rubie is IRubie {
         ownersContract = _ownersContract;
         Name = _name;
         Symbol = _symbol;
-        Price = MAX_INTEGER;
+        Price = 1;
     }
 
     function name() external view override returns (string memory _name) {

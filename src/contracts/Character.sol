@@ -31,7 +31,7 @@ contract Character is ICharacter {
     ) isValidName(_name) {
         require(bytes(_symbol).length == 3, "Invalid Symbol");
         _totalSupply = 0;
-        MintPrice = 0;
+        MintPrice = 1;
         Name = _name;
         Symbol = _symbol;
         TokenURI = _tokenURI;
@@ -236,8 +236,12 @@ contract Character is ICharacter {
         owners[_totalSupply] = msg.sender;
         owned[msg.sender] = _totalSupply;
 
+        balances[msg.sender]++;
+
         rubieContract.addBalance(msg.sender, 1000);
         _checkERC721Receiver(msg.sender, _totalSupply);
+
+        emit Transfer(address(0), msg.sender, _totalSupply);
     }
        
     function mintHero(

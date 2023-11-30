@@ -30,7 +30,7 @@ contract Weapon is IWeapon {
         _tokenURI = tokenURI;
         _ownerContract = ownerContract;
         _characterContract = characterContract;
-        _mintPrice = 0;
+        _mintPrice = 1;
     }
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
@@ -143,6 +143,9 @@ contract Weapon is IWeapon {
             _name,
             false
         );
+
+        _owners[_totalSupply] = msg.sender;
+        
         _balances[msg.sender]++;
         emit Transfer(address(0), msg.sender, _totalSupply);
     }

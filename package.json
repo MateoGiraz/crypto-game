@@ -18,6 +18,6 @@
     "scripts": {
         "compile": "npx hardhat compile",
         "test": "npx hardhat test",
-        "deploy": "npm run compile && npx hardhat run src/scripts/deploy.js --network ganache"
+        "deploy": "npm run compile && npx hardhat run src/scripts/deploy.js --network sepolia"
     }
 }
