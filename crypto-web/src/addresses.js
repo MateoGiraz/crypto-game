@@ -1,3 +1,3 @@
-export const rubieAddress = "0x45525b319A0B992f948066ac5110F376f5757754"
-export const characterAddress = "0xd908b71e4C366aDdD56DCE8D2309a671dE435B45"
-export const weaponAddress = "0x9809F6FE6149b2e04BE61d4867105CBF502893dB"
+export const rubieAddress = "0x8F986974908cA7459d5fb50ee7F10c85248d7627"
+export const characterAddress = "0xfA440153e501b14cb96c3B3f805757A40C8Fe39F"
+export const weaponAddress = "0xC4E2d5513C6574258496862A7e7570Bf3C527Fb4"
