@@ -28,7 +28,11 @@ contract Character is ICharacter {
         string memory _symbol,
         string memory _tokenURI,
         address _ownersContract
-    ) isValidName(_name) {
+    ) 
+    isValidString(_name)
+    isValidString(_symbol)
+    isValidString(_tokenURI)
+    isValidName(_name) {
         require(bytes(_symbol).length == 3, "Invalid Symbol");
         _totalSupply = 0;
         MintPrice = 1;
@@ -409,6 +413,11 @@ function collectFee() external override {
 
     modifier isTokenOwner(uint256 _tokenId, address _address) {
         require(owners[_tokenId] == _address, "Not authorized");        
+        _;
+    }
+
+    modifier isValidString(string memory name) {
+        require(bytes(name).length > 0, "_name, _symbol and _tokenURI are mandatory parameters");
         _;
     }
 

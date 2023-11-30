@@ -23,7 +23,11 @@ contract Weapon is IWeapon {
     mapping (uint256 => Metadata) _metadatas;
 
     constructor(string memory name, string memory symbol, string memory
-    tokenURI, address ownerContract, address characterContract) isValidName(name){
+    tokenURI, address ownerContract, address characterContract) 
+    isValidString(name)
+    isValidString(symbol)
+    isValidString(tokenURI)
+    isValidName(name){
         require(bytes(symbol).length == 3, "Invalid Symbol");
         _name = name;
         _symbol = symbol;
@@ -335,6 +339,11 @@ function collectFee() external override {
 
     modifier isValidName(string memory name) {
         require(bytes(name).length > 0, "Invalid _name");
+        _;
+    }
+
+    modifier isValidString(string memory name) {
+        require(bytes(name).length > 0, "_name, _symbol and _tokenURI are mandatory parameters");
         _;
     }
 
