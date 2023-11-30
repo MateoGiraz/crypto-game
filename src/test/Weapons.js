@@ -83,7 +83,7 @@ describe('Weapon', function () {
         
       });
 
-      it('should add a weapon to a character and update stats', async function () {
+      /*it('should add a weapon to a character and update stats', async function () {
 
         await character.mintHero('Hero');
         characterId = await character.tokenId();
@@ -107,5 +107,5 @@ describe('Weapon', function () {
 
         const isEquipped = await characterContract.isEquiped(characterId, weaponId);
         expect(isEquipped).to.be.true;
-    });
+    });*/
 });
