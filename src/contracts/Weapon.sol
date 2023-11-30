@@ -140,7 +140,7 @@ contract Weapon is IWeapon {
             5,
             _mintPrice,
             _mintPrice,
-            _name,
+            name,
             false
         );
 

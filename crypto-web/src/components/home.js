@@ -17,9 +17,9 @@ export default function Home(){
 
   return(
     <div class="h-full w-full grid h-screen place-items-center ">
-      <div class="w-full h-full md:w-3/4 md:h-3/4 block bg-white border border-gray-200 rounded-lg shadow overflow-none">
+      <div class="w-full h-full md:w-3/4 md:h-3/4 block bg-white border border-gray-200 rounded-lg shadow overflow-hidden">
         <Header/>
-        <div class="flex h-[calc(100%_-_80px)] w-full">
+        <div class="flex h-[calc(100%_-_80px)] w-full ">
           <Sidebar option={option} setOption={setOption} screens={screens}/>
           <div class="h-full w-full">
             {option == screens.Rubie && <Rubie/>}
