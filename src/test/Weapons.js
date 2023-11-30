@@ -23,6 +23,8 @@ describe('Weapon', function () {
         rubie = await Rubie.deploy('Rubie', 'RBE', ownersContract.address);
         await rubie.deployed();
 
+        await rubie.mint(1, owner.address);
+
         // Deploy Character
         const Character = await ethers.getContractFactory('Character')
         character = await Character.deploy('Character','CHR','tokenURI',ownersContract.address);

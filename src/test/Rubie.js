@@ -29,7 +29,7 @@ describe('Rubie', function () {
     expect(await rubie.symbol()).to.equal('RBE');
     expect((await rubie.decimals()).toNumber()).to.equal(18);
     expect((await rubie.totalSupply()).toNumber()).to.equal(0);
-    expect((await rubie.price()).toString()).to.equal(maxInteger.toString());
+    expect((await rubie.price()).toString()).to.equal(1+"");
   });
   
   it('should allow minting by owner', async function () {
