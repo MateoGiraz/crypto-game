@@ -6,25 +6,10 @@
 ## Integrantes del equipo: Mateo Giraz (241195) - Joaquin Rodríguez (231355) - Santiago Villar (256345)
 ### Grupo M6C- Profesor: Itay Brenner
 
-### Enlace al repositorio:  https://github.com/TallerTecnologias2/obligatorio-2023-02-giraz-rodriguez-villar-1
-### Video presentando el obligatorio realizado:  
-
-## Setup
-
-1. Clonar el repositorio `git clone <route to repo>`
-2. Instalar dependencias `npm install`
-3. Compile la solución `npx hardhat compile`
-4. Ejecute todos los test  `npx hardhat test`
-
-## **IMPORTANTE** Suba sus cambios al repositorio
-## **IMPORTANTE** Sin esta acción el trabajo se tomará como no entregado
-
-1. Publicar cambios a su repositorio
-
-`git add .`  
-`git commit -m "<<your comments here>>"`  
-`git push origin main`
-
+### [Enlace al repositorio](https://github.com/TallerTecnologias2/obligatorio-2023-02-giraz-rodriguez-villar-1)
+### [Video presentando el obligatorio realizado](https://www.youtube.com/watch?v=CBhjbTMVV1Q&ab_channel=MateoGiraz)
+Tuvimos problemas a la hora de grabar el video por lo que el resultado no tiene la mejor calidad (se ve trancado). En vista de la cercanía a la entrega, solo pudimos volver a grabar la demo de frontend, que es la última parte del video.
+### [Demo frontend](https://crypto.giraz.xyz/)
 ## Descripción de proyecto:
 
 El proyecto consta de una Dapp con las interfaces proporcionadas implementadas en solidity y un frontend en react (Version 17.02).
@@ -95,8 +80,10 @@ Para un diagrama mas detallado:
 
 ## Desarrollo del obligatorio
 
-Tras haber desarrollado nuestro obligatorio podemos destacar tres aspectos de nuestro desarrollo:
+Tras haber desarrollado nuestro obligatorio podemos destacar aspectos de nuestro desarrollo:
 
+- Implementamos una pipeline de CI para poder tener feedback sobre nuestros tests y poder mergear nuestras branches con seguridad.
+  
 - Uso de modifiers: Para los requerimientos de cada función utilizamos modifiers, ya que notamos que muchas funciones tenían varios require en común. De esta forma obtenemos un código reutilizable y un contrato más limpio
 
 - Creación de funciones auxiliares: Creamos las funciones auxiliares que nos parecieron necesarias para implementar las interfaces en cada contrato, asegurándonos de que estas solo puedan ser llamadas por los contratos especificos.
