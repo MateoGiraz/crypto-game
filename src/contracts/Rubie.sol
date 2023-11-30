@@ -13,7 +13,7 @@ contract Rubie is IRubie {
     string Symbol;
     uint256 Price;
     address ownersContract;
-    uint256 private _totalSupply;
+    uint256 _totalSupply;
 
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) allowed;

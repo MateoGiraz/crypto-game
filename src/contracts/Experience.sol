@@ -16,7 +16,7 @@ contract Experience is IExperience {
     string Symbol;
     uint256 Price;
     address OwnersContract;
-    uint256 private _totalSupply;
+    uint256 _totalSupply;
 
     mapping (address => uint256) balances;
     mapping (address => mapping (address => uint256)) allowed;
