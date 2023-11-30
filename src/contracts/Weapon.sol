@@ -129,8 +129,8 @@ contract Weapon is IWeapon {
 
     function safeMint(string memory name) external override 
     isValidName(name)
-    ///hasEnoughBalance(_mintPrice)
-    hasEnoughAllowance()
+    hasEnoughBalance(_mintPrice)
+    ///hasEnoughAllowance()
     {
         _totalSupply++;
         _owners[_totalSupply] = msg.sender;
@@ -158,7 +158,7 @@ contract Weapon is IWeapon {
     validSellPrice(_sellPrice)
     validRequiredExperience(_requiredExperience) 
     hasEnoughBalance(_mintPrice) 
-    hasEnoughAllowance() 
+    ///hasEnoughAllowance() 
     {
         _totalSupply++;
         _owners[_totalSupply] = msg.sender;
