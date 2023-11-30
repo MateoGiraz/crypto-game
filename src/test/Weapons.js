@@ -142,7 +142,7 @@ describe('Weapon', function () {
 
         await expect(
             weapon.connect(recipient).setOnSale(tokenId, true)
-        ).to.be.revertedWith("Not the owner");
+        ).to.be.revertedWith("Not authorized");
     });
 
     it('should not allow a purchase if the buyer does not have enough Rubies', async function () {
@@ -158,32 +158,4 @@ describe('Weapon', function () {
           weapon.buy(tokenId, 'New Sword')
       ).to.be.revertedWith("Not enough Rubies");
   });
-/*
-    it('should allow a user to buy a weapon', async function () {
-        const weaponName = 'Sword of Power';
-        await weapon.safeMint(weaponName);
-        const tokenId = weapon.totalSupply();
-        const sellPrice = 50;
-
-        const initialBalanceOwner = await rubie.balanceOf(owner.address);
-        const initialBalanceRecipient = await rubie.balanceOf(recipient.address);
-        await rubie.mint(sellPrice, recipient.address);
-        await rubie.mint(sellPrice, owner.address);
-
-        await weapon.setOnSale(tokenId, true);
-
-        await expect(weapon.buy(tokenId, 'New Sword'));
-        
-        const metadata = await weapon.metadataOf(tokenId);
-
-        const finalBalanceOwner = await rubie.balanceOf(owner.address);
-        
-        const finalBalanceRecipient = await rubie.balanceOf(recipient.address);
-
-        //expect(metadata.onSale).to.equal(false);
-        expect(metadata.name).to.equal('New Sword');
-        expect(finalBalanceOwner.sub(initialBalanceOwner)).to.equal(sellPrice);
-        expect(finalBalanceRecipient.sub(initialBalanceRecipient)).to.equal(0);
-
-    });*/
 });
