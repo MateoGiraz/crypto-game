@@ -35,7 +35,6 @@ describe('Experience', function () {
     await experience.deployed();
 
     // Deploy Character
-    // Deploy Character
     const Character = await ethers.getContractFactory('Character')
     character = await Character.deploy(
       'Character',
