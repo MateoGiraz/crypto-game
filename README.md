@@ -6,6 +6,7 @@
 ## Integrantes del equipo: Mateo Giraz (241195) - Joaquin Rodríguez (231355) - Santiago Villar (256345)
 ### Grupo M6C- Profesor: Itay Brenner
 
+### Enlace al repositorio:  https://github.com/TallerTecnologias2/obligatorio-2023-02-giraz-rodriguez-villar-1
 ### Video presentando el obligatorio realizado:  
 
 ## Setup
