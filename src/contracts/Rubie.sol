@@ -27,7 +27,7 @@ contract Rubie is IRubie {
         ownersContract = _ownersContract;
         Name = _name;
         Symbol = _symbol;
-        Price = MAX_INTEGER;
+        Price = 1;
     }
 
     function name() external view override returns (string memory _name) {
@@ -117,7 +117,7 @@ contract Rubie is IRubie {
     }
 
     function buy(uint256 _amount) external payable override {
-        uint256 totalPrice = Price * _amount;
+        uint256 totalPrice = (Price / 1000000000000000000) * _amount;
         require(msg.value >= totalPrice, "Insufficient ether");
         if (msg.value > totalPrice) {
             payable(msg.sender).transfer(msg.value - totalPrice);
