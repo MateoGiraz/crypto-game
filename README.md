@@ -1,14 +1,4 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/B8-f4DG0)
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=12461672&assignment_repo_type=AssignmentRepo)
-
-# Obligatorio de Taller de Tecnologías 2 - Gaming Platform
-
-## Integrantes del equipo: Mateo Giraz (241195) - Joaquin Rodríguez (231355) - Santiago Villar (256345)
-### Grupo M6C- Profesor: Itay Brenner, German Trautman
-
-### [Enlace al repositorio](https://github.com/TallerTecnologias2/obligatorio-2023-02-giraz-rodriguez-villar-1)
-### [Video presentando el obligatorio realizado](https://www.youtube.com/watch?v=CBhjbTMVV1Q&ab_channel=MateoGiraz)
-Tuvimos problemas a la hora de grabar el video por lo que el resultado no tiene la mejor calidad (se ve trancado). En vista de la cercanía a la entrega, solo pudimos volver a grabar la demo de frontend, que es la última parte del video. En el video se comenta el uso de GitFlow y buenas practicas alrededor del repositorio, se muestran los commits, pull requests y actions de GitHub. Tabmién se muestran buenas prácticas de código y se enseña el script de deploy. Finalmente se muestra el frontend y sus funcionalidades.
+# Gaming Platform
 ### [Demo frontend](https://crypto.giraz.xyz/)
 ## Descripción de proyecto:
 
